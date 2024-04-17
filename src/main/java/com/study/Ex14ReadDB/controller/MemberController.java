@@ -100,4 +100,34 @@ public class MemberController {
 
         return response;
     }
+
+    @PostMapping("/pwFind")
+    @ResponseBody
+    public ResponsePwFindDto pwFind(@RequestBody RequestPwFindDto requestDto){
+
+        String userName = requestDto.getUserName();
+        String userEmail = requestDto.getUserEmail();
+        String userID = requestDto.getUserID();
+
+        Member member = memberService.findMemberPw(userName, userEmail, userID);
+
+
+        ResponsePwFindDto response;
+        if(member != null){
+            response = ResponsePwFindDto.builder()
+                    .status("ok")
+                    .userPW(member.getMemberPw())
+                    .build();
+
+            return response;
+        }
+
+        response = ResponsePwFindDto.builder()
+                .status("fail")
+                .result("그런 멤버 없음")
+                .build();
+
+        return response;
+    }
+
 }

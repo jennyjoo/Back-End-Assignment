@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
@@ -44,6 +45,21 @@ public class MemberService {
         Optional<Member> optional = memberRepository.findMemberByMemberNameAndMemberEmail(userName, userEmail);
 
         return optional;
+    }
+
+    @Transactional(readOnly = true)
+    public Member findMemberPw(String memberName, String memberEmail, String memberID){
+        Optional<Member> optional = memberRepository.findMemberByMemberId(memberID);
+        if(optional.isPresent()){
+            Member member = optional.get();
+
+            if(member.getMemberEmail().equals(memberEmail)
+            && member.getMemberName().equals(memberName)){
+                return member;
+            }
+        }
+
+        return null;
     }
 
 }

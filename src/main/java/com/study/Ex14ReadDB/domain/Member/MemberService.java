@@ -39,4 +39,11 @@ public class MemberService {
          return true;
     }
 
+    @Transactional(readOnly = true)
+    public Optional<Member> findMemberByUserNameAndEmail(String userName, String userEmail){
+        Optional<Member> optional = memberRepository.findMemberByMemberNameAndMemberEmail(userName, userEmail);
+
+        return optional;
+    }
+
 }

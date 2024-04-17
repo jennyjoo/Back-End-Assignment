@@ -1,12 +1,9 @@
 package com.study.Ex14ReadDB.controller;
 
 
-import com.study.Ex14ReadDB.domain.Member.dto.RequestDuplDto;
-import com.study.Ex14ReadDB.domain.Member.dto.RequestJoinDto;
-import com.study.Ex14ReadDB.domain.Member.dto.RequestLoginDto;
+import com.study.Ex14ReadDB.domain.Member.dto.*;
 import com.study.Ex14ReadDB.domain.Member.Member;
 import com.study.Ex14ReadDB.domain.Member.MemberService;
-import com.study.Ex14ReadDB.domain.Member.dto.ResponseDuplDto;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -69,17 +66,6 @@ public class MemberController {
     @ResponseBody
     public String join(@ModelAttribute RequestJoinDto dto){
 
-//        String userName = dto.getUserName();
-//        String userId = dto.getUserID();
-//        String userPW = dto.getUserPW();
-//        String userEmail = dto.getEmailID() + "@" + dto.getEmailDomain();
-//        Integer userReceive = dto.getReceive();
-//        Integer passwordCheckQuestion = dto.getPasswordCheckQuestion();
-//        String passwordCheckAnswer = dto.getPasswordCheckAnswer();
-//        String userGender = dto.getGender();
-
-
-
 
         Boolean added = memberService.addMember(dto.toEntity());
         if(added){
@@ -88,4 +74,30 @@ public class MemberController {
         return "<script>alert('가입 실패'); history.back();</script>";
     }
 
+    @PostMapping("/idFind")
+    @ResponseBody
+    public ResponseIdFindDto idFind(@RequestBody RequestIdFindDto requestDto){
+        String userName = requestDto.getUserName();
+        String userEmail = requestDto.getUserEmail();
+
+        System.out.println("크롱 : " + requestDto.getUserName());
+        Optional<Member> optional = memberService.findMemberByUserNameAndEmail(userName, userEmail);
+
+        ResponseIdFindDto response;
+        if(optional.isPresent()){
+            Member member = optional.get();
+            response = ResponseIdFindDto.builder()
+                    .status("ok")
+                    .userID(member.getMemberId())
+                    .build();
+
+            return response;
+        }
+
+        response = ResponseIdFindDto.builder()
+                .status("fail")
+                .build();
+
+        return response;
+    }
 }

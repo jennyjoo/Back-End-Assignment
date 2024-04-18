@@ -27,22 +27,16 @@
       integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
       crossorigin="anonymous"
     ></script>
-
-    <script>
-      $(document).ready(function () {
-          $("#headerTop").load("./headerTop.html");
-          $("#header").load("./header.html");
-          $("#main").load("./main.html");
-          $("#footer").load("./footer.html");
-      });
-    </script>
   </head>
   <body>
     <!-- 헤더 -->
     <!-- <div id="headerTop"></div> -->
     <div th:replace="/fragments/headerTop.html :: fragment-headerTop"></div>
     <!-- <div id="header" class="sticky-top"></div> -->
-    <div th:replace="/fragments/header.html :: fragment-header" class="sticky-top"></div>
+    <div
+      th:replace="/fragments/header.html :: fragment-header"
+      class="sticky-top"
+    ></div>
 
     <!-- 메인 -->
     <!-- <div id="main"></div> -->

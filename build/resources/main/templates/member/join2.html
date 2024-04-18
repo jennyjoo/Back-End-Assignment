@@ -103,7 +103,7 @@
             <tr>
               <td>아이디</td>
               <td>
-                <input type="text" name="userID" id="userID" />
+                <input type="text" name="userID" id="userID" required />
                 <img
                   src="../img/member/btn_iddupl.gif"
                   onclick="fetch_dupl()"
@@ -114,7 +114,7 @@
             <tr>
               <td>비밀번호</td>
               <td>
-                <input type="password" name="userPW" />
+                <input type="password" name="userPW" required />
                 영문/숫자/특수문자조합으로 8~16자리. 첫글자는 영문자로 사용
               </td>
             </tr>
@@ -124,12 +124,12 @@
             </tr>
             <tr>
               <td>이름</td>
-              <td><input type="text" name="userName" /></td>
+              <td><input type="text" name="userName" required /></td>
             </tr>
             <tr>
               <td>이메일</td>
               <td>
-                <input type="text" name="eamilID" />@<input
+                <input type="text" name="eamilID" required />@<input
                   type="text"
                   name="emailDomain"
                 />
@@ -138,7 +138,7 @@
             <tr>
               <td>이메일 수신여부</td>
               <td>
-                <input type="radio" name="receive" id="true" />수신
+                <input type="radio" name="receive" id="true" checked />수신
                 <input type="radio" name="receive" id="false" />수신안함
               </td>
             </tr>
@@ -146,7 +146,7 @@
               <td>비밀번호 확인시 질문</td>
               <td>
                 <select class="size" name="passwordCheckQuestion">
-                  <option value="0">========선택========</option>
+                  <option value="0" selected>========선택========</option>
                   <option value="1">기억에 남는 추억의 장소는?</option>
                   <option value="2">자신의 인생 좌우명은?</option>
                   <option value="3">자신의 보물 제1호는?</option>
@@ -157,16 +157,20 @@
             </tr>
             <tr>
               <td>비밀번호 확인시 답변</td>
-              <td><input type="text" name="passwordCheckAnswer" value="" /></td>
+              <td>
+                <input
+                  type="text"
+                  name="passwordCheckAnswer"
+                  value=""
+                  required
+                />
+              </td>
             </tr>
             <tr>
               <td>성별</td>
               <td>
-                <input type="radio" name="gender" value="m" />남자<input
-                  type="radio"
-                  name="gender"
-                  value="f"
-                />여자
+                <input type="radio" name="gender" value="m" checked />남자
+                <input type="radio" name="gender" value="f" />여자
               </td>
             </tr>
             <tr>
@@ -213,14 +217,37 @@
         if (checkJoin("joinForm", form)) {
           document.getElementById("isDupl").remove();
           document.getElementById("joinForm").submit();
-        } else {
-          alert("중복 확인 해주세요");
         }
       };
       const checkJoin = (id, form) => {
         const isDupl = form.isDupl.value;
+        const userId = form.userID.value;
         const pw1 = form.userPW.value;
         const pw2 = form.userPWCheck.value;
+        const name = form.userName.value;
+        const eamilID = form.eamilID.value;
+        const emailDomain = form.emailDomain.value;
+        const passwordCheckQuestion = form.passwordCheckQuestion.value;
+        const passwordCheckAnswer = form.passwordCheckAnswer.value;
+
+        if (
+          !userId ||
+          !name ||
+          !pw1 ||
+          !pw2 ||
+          !eamilID ||
+          !emailDomain ||
+          !passwordCheckAnswer ||
+          passwordCheckQuestion == "0"
+        ) {
+          alert("값을 다 입력해주세요");
+          return false;
+        }
+
+        if (pw1.length < 4) {
+          alert("비밀전호는 4자리 이상만 입력 가능합니다");
+          return false;
+        }
 
         if (pw1 != pw2) {
           alert("비밀번호 확인 부탁드립니다");
@@ -229,6 +256,9 @@
 
         if (isDupl == "ok") {
           return true;
+        } else {
+          alert("중복 확인 해주세요");
+          return false;
         }
 
         return false;
@@ -264,8 +294,10 @@
 
             if (status === "ok") {
               document.getElementById("isDupl").value = "ok";
+              alert("사용 가능한 아이디 입니다");
             } else {
               document.getElementById("isDupl").value = "fail";
+              alert("이미 사용중인 아이디 입니다");
             }
           });
       };

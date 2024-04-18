@@ -1,12 +1,16 @@
 package com.study.Ex14ReadDB.domain.Member;
 
 
+import com.study.Ex14ReadDB.domain.Member.dto.MemberDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -14,6 +18,20 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    @Transactional(readOnly = true)
+    public List<MemberDto> findAll(){
+        Sort sort = Sort.by(Sort.Direction.DESC, "memberIdx");
+        List<Member> members = memberRepository.findAll(sort);
+
+        return members.stream().map(MemberDto::new).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Member> isMember(String memberId, String memberPw){
+        Optional<Member> optional = memberRepository.findMemberByMemberIdAndMemberPw(memberId, memberPw);
+
+        return optional;
+    }
 
     @Transactional(readOnly = true)
     public Optional<Member> findByMemberId(String memberId){

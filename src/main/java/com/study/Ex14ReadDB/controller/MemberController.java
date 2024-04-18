@@ -7,10 +7,8 @@ import com.study.Ex14ReadDB.domain.Member.MemberService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -20,23 +18,33 @@ public class MemberController {
 
     private final MemberService memberService;
 
+
+    @GetMapping("/member/logout")
+    public String logout(Model model, HttpSession session){
+
+        session.invalidate();
+        return "redirect:/";
+
+    }
     @PostMapping("/loginAction")
     @ResponseBody
     public String loginAction(@ModelAttribute RequestLoginDto dto,
                               HttpSession session){
 
-        String memberId = dto.getLoginID();
-        Optional<Member> optional = memberService.findByMemberId(memberId);
+        Optional<Member> hasID = memberService.findByMemberId(dto.getLoginID());
+        if(hasID.isPresent()){
+            Member member = hasID.get();
 
-        if(optional.isPresent()){
-            Member member = optional.get();
-            session.setAttribute("isLogin", "true");
-            session.setAttribute("memberId", member.getMemberId());
+            if(member.getMemberPw().equals(dto.getLoginPW())){
+                session.setAttribute("isLogin", true);
+                return "<script>alert('로그인 성공'); location.href='/';</script>";
+            }
 
-            return "<script>alert('로그인 성공'); location.href='/';</script>";
+            return "<script>alert('비밀번호가 틀렸습니다'); history.back();</script>";
         }
 
-        return "<script>alert('로그인 실패'); history.back();</script>";
+        return "<script>alert('그런 아이디가 없습니다'); history.back();</script>";
+
     }
 
     @PostMapping("/fetchDupl")
@@ -65,7 +73,6 @@ public class MemberController {
     @PostMapping("/member/join")
     @ResponseBody
     public String join(@ModelAttribute RequestJoinDto dto){
-
 
         Boolean added = memberService.addMember(dto.toEntity());
         if(added){

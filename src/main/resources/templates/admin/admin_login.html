@@ -144,7 +144,7 @@
         <div><p>The design and maintenance are excellent.</p></div>
       </div>
       <div class="loginMain">
-        <form action="adminLoginAction" method="post">
+        <form action="/adminLoginAction" method="post">
           <table class="main1">
             <tr>
               <td>
@@ -152,8 +152,8 @@
                 비밀번호
               </td>
               <td>
-                <input type="text" name="member_id" /> <br />
-                <input type="text" name="member_pw" />
+                <input type="text" name="loginID" /> <br />
+                <input type="text" name="loginPW" />
               </td>
               <td>
                 <input
@@ -161,7 +161,7 @@
                   class="loginImg"
                   name="submit"
                   value="submit"
-                  src="../img/member/btn_login.gif"
+                  src="/img/member/btn_login.gif"
                 />
               </td>
             </tr>
@@ -198,33 +198,5 @@
         </div>
       </div>
     </div>
-
-    <script>
-      // back to top 기능
-      $(document).ready(function () {
-        $(window).scroll(function () {
-          if ($(this).scrollTop() > 50) {
-            console.log("fadeIn");
-            $("#back-to-top").fadeIn();
-          } else {
-            console.log("fadeOut");
-            $("#back-to-top").fadeOut();
-          }
-        });
-        // scroll body to 0px on click
-        $("#back-to-top").click(function () {
-          console.log("click");
-          $("#back-to-top").tooltip("hide");
-          $("body,html").animate(
-            {
-              scrollTop: 0,
-            },
-            500
-          );
-          return false;
-        });
-        $("#back-to-top").tooltip("show");
-      });
-    </script>
   </body>
 </html>

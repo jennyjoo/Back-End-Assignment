@@ -1,4 +1,4 @@
-package com.study.Ex14ReadDB.domain.CompanyOne2OneReply;
+package com.study.Ex14ReadDB.domain.CompanyOne2oneReply;
 
 
 import jakarta.persistence.*;
@@ -14,35 +14,35 @@ import java.time.LocalDate;
 @Table(name = "company_one2one_reply")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CompanyOne2OneReply {
+public class CompanyOne2oneReply {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "one2one_reply_idx")
-    private Long one2OneReplyIdx;
+    private Long one2oneReplyIdx;
 
     @Column(name = "one2one_reply_content")
-    private String one2OneReplyContent;
+    private String one2oneReplyContent;
 
     @Column(name = "one2one_reply_name")
-    private String one2OneReplyName; //답글 단 사람
+    private String one2oneReplyName; //답글 단 사람
 
     @Column(name = "one2one_reply_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate one2OneReplyDate = LocalDate.now();
+    private LocalDate one2oneReplyDate = LocalDate.now();
 
     @Column(name = "one2one_reply_one2one_idx")
-    private Long one2OneReplyOne2OneIdx;
+    private Long one2oneReplyOne2oneIdx;
 
 
     @Builder
-    public CompanyOne2OneReply(String one2OneReplyContent, String one2OneReplyName, Long one2OneReplyOne2OneIdx) {
-        this.one2OneReplyContent = one2OneReplyContent;
-        this.one2OneReplyName = one2OneReplyName;
-        this.one2OneReplyOne2OneIdx = one2OneReplyOne2OneIdx;
+    public CompanyOne2oneReply(String one2oneReplyContent, String one2oneReplyName, Long one2oneReplyOne2OneIdx) {
+        this.one2oneReplyContent = one2oneReplyContent;
+        this.one2oneReplyName = one2oneReplyName;
+        this.one2oneReplyOne2oneIdx = one2oneReplyOne2oneIdx;
     }
 
     public void updateReplyDate(LocalDate localDate){
-        this.one2OneReplyDate = localDate;
+        this.one2oneReplyDate = localDate;
     }
 }

@@ -1,7 +1,11 @@
 package com.study.Ex14ReadDB.controller;
 
 
-import com.study.Ex14ReadDB.domain.Member.dto.*;
+import com.study.Ex14ReadDB.UserSession;
+import com.study.Ex14ReadDB.domain.Member.Dto.Request.*;
+import com.study.Ex14ReadDB.domain.Member.Dto.Response.ResponseDuplDto;
+import com.study.Ex14ReadDB.domain.Member.Dto.Response.ResponseIdFindDto;
+import com.study.Ex14ReadDB.domain.Member.Dto.Response.ResponsePwFindDto;
 import com.study.Ex14ReadDB.domain.Member.Member;
 import com.study.Ex14ReadDB.domain.Member.MemberService;
 import jakarta.servlet.http.HttpSession;
@@ -13,19 +17,41 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @Controller
+@RequestMapping("/member")
 @RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
 
 
-    @GetMapping("/member/logout")
-    public String logout(Model model, HttpSession session){
+    @GetMapping("/login")
+    public String login(){
+        return "member/login";
+    }
 
+
+    @GetMapping("/logout")
+    public String logout(Model model, HttpSession session){
         session.invalidate();
         return "redirect:/";
-
     }
+
+    @GetMapping("/idFindForm")
+    public String idFind(){
+        return "member/idFind"; //idFind.html 응답
+    }
+
+    @GetMapping("/passwordFindForm")
+    public String passwordFind(){
+        return "member/passwordFind"; //idFind.html 응답
+    }
+
+    @GetMapping("/joinForm")
+    public String joinForm(){
+        return "/member/join2"; //join2.html 응답
+    }
+
+
     @PostMapping("/loginAction")
     @ResponseBody
     public String loginAction(@ModelAttribute RequestLoginDto dto,
@@ -36,7 +62,11 @@ public class MemberController {
             Member member = hasID.get();
 
             if(member.getMemberPw().equals(dto.getLoginPW())){
-                session.setAttribute("isLogin", true);
+
+                UserSession userSession = UserSession.makeUserSession();
+                userSession.login();
+
+                session.setAttribute("userSession", userSession);
                 return "<script>alert('로그인 성공'); location.href='/';</script>";
             }
 
@@ -46,6 +76,7 @@ public class MemberController {
         return "<script>alert('그런 아이디가 없습니다'); history.back();</script>";
 
     }
+
 
     @PostMapping("/fetchDupl")
     @ResponseBody
@@ -70,7 +101,7 @@ public class MemberController {
         return response;
     }
 
-    @PostMapping("/member/join")
+    @PostMapping("/join")
     @ResponseBody
     public String join(@ModelAttribute RequestJoinDto dto){
 
@@ -87,7 +118,6 @@ public class MemberController {
         String userName = requestDto.getUserName();
         String userEmail = requestDto.getUserEmail();
 
-        System.out.println("크롱 : " + requestDto.getUserName());
         Optional<Member> optional = memberService.findMemberByUserNameAndEmail(userName, userEmail);
 
         ResponseIdFindDto response;

@@ -1,11 +1,9 @@
 package com.study.Ex14ReadDB.controller;
 
 
-import com.study.Ex14ReadDB.domain.CompanyNotice.CompanyNoticeService;
-import com.study.Ex14ReadDB.domain.CompanyNotice.dto.CompanyNoticeDto;
-import com.study.Ex14ReadDB.domain.CompanyNotice.dto.CompanyNoticeListDto;
-import com.study.Ex14ReadDB.domain.CompanyNotice.dto.RequestCompanyNoticeDto;
-import com.study.Ex14ReadDB.domain.CompanyNotice.dto.ResponseCompanyNoticeDto;
+import com.study.Ex14ReadDB.domain.Community.NoticeService;
+import com.study.Ex14ReadDB.domain.Community.dto.CompanyNoticeListDto;
+import com.study.Ex14ReadDB.domain.Community.dto.Request.RequestCompanyNoticeDto;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,15 +11,26 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/community")
 public class CommunityController {
 
-    private final CompanyNoticeService companyNoticeService;
+    private final NoticeService noticeService;
+
+
+    @GetMapping("/notice/list")
+    public String noticeList(Model model){
+        List<CompanyNoticeListDto> dto = noticeService.findAllList();
+
+        model.addAttribute("dto", dto);
+
+        return "/community/community01";
+    }
 
     @PostMapping("/notice")
     public String notice(@ModelAttribute RequestCompanyNoticeDto requestDto,
@@ -41,13 +50,13 @@ public class CommunityController {
         List<CompanyNoticeListDto> dto = null;
 
         if(category.equals("title".toUpperCase())){
-            dto = companyNoticeService.findByTitle(content);
+            dto = noticeService.findByTitle(content);
         }
         else if( category.equals("content".toUpperCase())){
-            dto = companyNoticeService.findByContent(content);
+            dto = noticeService.findByContent(content);
         }
         else if(category.equals("member".toUpperCase())){
-            dto = companyNoticeService.findByMemberId(content);
+            dto = noticeService.findByMemberId(content);
         }
 
         model.addAttribute("dto", dto);

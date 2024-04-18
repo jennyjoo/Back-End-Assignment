@@ -135,7 +135,7 @@
           <tr th:each="list, status:${dto}">
             <td th:text="|질문${status.count}|"></td>
             <td
-              th:onclick="|location.href='http://localhost:8080/community/customer/customer03/detail?faqIdx=${list.faqIdx}'|"
+              th:onclick="|location.href='http://localhost:8080/customer/faq/detail?no=${list.faqIdx}'|"
               th:text="${list.faqTitle}"
             ></td>
           </tr>
@@ -183,6 +183,7 @@
     </div>
 
     <!-- 푸터 -->
-    <div id="footer"></div>
+    <!-- <div id="footer"></div> -->
+    <div th:replace="/fragments/footer.html :: fragment-footer"></div>
   </body>
 </html>

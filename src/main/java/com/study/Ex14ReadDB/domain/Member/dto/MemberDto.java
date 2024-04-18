@@ -1,9 +1,8 @@
-package com.study.Ex14ReadDB.domain.Member.dto;
+package com.study.Ex14ReadDB.domain.Member.Dto;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.study.Ex14ReadDB.domain.Member.Member;
-import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

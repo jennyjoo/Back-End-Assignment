@@ -10,7 +10,6 @@
     <!-- main.jsp, login.jsp, ... -->
     <link rel="stylesheet" href="/css/admin/admin.css" />
 
-
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -117,7 +116,7 @@
         </div>
       </div>
     </nav>
-  
+
     <!-- 메인 -->
     <!-- COMMON -->
 
@@ -142,11 +141,12 @@
       <!-- 사이드메뉴 -->
       <div id="adminSide">
         <ul>
-          <li><a href="./admin_member.html">회원 관리</a></li>
+          <li><a href="/admin/memberList">회원 관리</a></li>
           <li>
-            <a href="./admin_notice.html" class="adminSideActive">공지사항 관리</a>
+            <a href="/admin/noticeList" class="adminSideActive"
+              >공지사항 관리</a
+            >
           </li>
-          
         </ul>
       </div>
       <!-- 메인 -->
@@ -154,31 +154,63 @@
         <div class="adminDiv">
           <h3>공지사항 관리</h3>
         </div>
-        <div class="adminDiv">
-          검색 옵션
-          <select name="search_select" id="search_select">
-            <option value="all" selected>전체</option>
-            <option value="title">제목</option>
-            <option value="content">내용</option>
-            <option value="id">작성자아이디</option>
-          </select>
-          <input
-            type="text"
-            name="search_keyword"
-            id="search_keyword"
-            value=""
-          />
-          <input type="image" src="../img/community/search.gif" />
-        </div>
-        <div class="adminDiv">
-          정렬
-          <select class="size" name="order_select" id="order_select">
-            <option value="id_asc" selected>아이디 오름차순</option>
-            <option value="id_desc">아이디 내림차순</option>
-            <option value="reg_date_asc">등록일 오름차순</option>
-            <option value="reg_date_desc">등록일 내림차순</option>
-          </select>
-        </div>
+        <form action="/admin/noticeListSearch" method="get">
+          <div class="adminDiv">
+            검색 옵션
+            <select name="searchSelect" id="searchSelect">
+              <option value="all" th:selected="${category} == 'all'">
+                전체
+              </option>
+              <option value="noticeTitle" th:selected="${category} == 'title'">
+                제목
+              </option>
+              <option
+                value="noticeContent"
+                th:selected="${category} == 'content'"
+              >
+                내용
+              </option>
+              <option value="noticeMemberId" th:selected="${category} == 'id'">
+                작성자아이디
+              </option>
+            </select>
+            <input
+              type="text"
+              name="searchKeyword"
+              id="searchKeyword"
+              th:value="${searchKeyword}"
+            />
+            <input type="image" src="/img/community/search.gif" />
+          </div>
+          <div class="adminDiv">
+            정렬
+            <select
+              class="size"
+              name="orderSelect"
+              id="orderSelect"
+              onchange="submit()"
+            >
+              <option value="id_asc" th:selected="${selected} == 'id_asc'">
+                아이디 오름차순
+              </option>
+              <option value="id_desc" th:selected="${selected} == 'id_desc'">
+                아이디 내림차순
+              </option>
+              <option
+                value="noticeDate_asc"
+                th:selected="${selected} == 'noticeDate_asc'"
+              >
+                등록일 오름차순
+              </option>
+              <option
+                value="noticeDate_desc"
+                th:selected="${selected} == 'noticeDate_desc'"
+              >
+                등록일 내림차순
+              </option>
+            </select>
+          </div>
+        </form>
         <div class="adminDiv2" id="tableTitle">
           <div>목록 10건</div>
           <div>
@@ -201,42 +233,17 @@
             </thead>
             <tbody>
               <tr
-                onclick="location.href='./admin_notice_view.html?notice_idx=5';"
+                th:each="list, status : ${dto}"
+                th:onclick="|location.href='/admin/notice/view?no=${list.noticeIdx}'|"
                 style="cursor: pointer"
               >
-                <td>1</td>
-                <td>타이틀1</td>
-                <td>admin</td>
-                <td>2024-04-09</td>
+                <td th:text="${list.noticeIdx}">1</td>
+                <td th:text="${list.noticeTitle}">타이틀1</td>
+                <td th:text="${list.noticeMemberId}">admin</td>
+                <td th:text="${list.noticeDate}">2024-04-09</td>
               </tr>
-              <tr
-                onclick="location.href='./admin_notice_view.html?notice_idx=4';"
-                style="cursor: pointer"
-              >
-                <td>2</td>
-                <td>타이틀1</td>
-                <td>admin</td>
-                <td>2024-04-08</td>
-              </tr>
-              <tr
-                onclick="location.href='./admin_notice_view.html?notice_idx=3';"
-                style="cursor: pointer"
-              >
-                <td>3</td>
-                <td>타이틀1</td>
-                <td>admin</td>
-                <td>2024-04-07</td>
-              </tr>
-              <tr
-                onclick="location.href='./admin_notice_view.html?notice_idx=2';"
-                style="cursor: pointer"
-              >
-                <td>4</td>
-                <td>타이틀1</td>
-                <td>admin</td>
-                <td>2024-04-07</td>
-              </tr>
-              <tr
+
+              <!-- <tr
                 onclick="location.href='./admin_notice_view.html?notice_idx=1';"
                 style="cursor: pointer"
               >
@@ -244,14 +251,13 @@
                 <td>타이틀1</td>
                 <td>admin</td>
                 <td>2024-04-05</td>
-              </tr>
+              </tr> -->
             </tbody>
           </table>
         </div>
 
         <div class="pageNav adminDiv2">
-          
-          <div><a href="./admin_notice_write.html">공지글 쓰기</a></div>
+          <div><a href="/admin/notice/write">공지글 쓰기</a></div>
         </div>
       </div>
     </div>

@@ -7,9 +7,9 @@
     <title>로그인</title>
 
     <!-- Main CSS : Header, Main, Footer -->
-    <link rel="stylesheet" href="../css/main.css" />
-    <link rel="stylesheet" href="../css/common.css" />
-    <link rel="stylesheet" href="../css/member/login.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/css/member/login.css" />
 
     <!-- Bootstrap CSS -->
     <link
@@ -63,7 +63,7 @@
         <div><p>The design and maintenance are excellent.</p></div>
       </div>
       <div class="loginMain">
-        <form action="/loginAction" method="post">
+        <form action="/member/loginAction" method="post">
           <table class="main1">
             <tr>
               <td>
@@ -91,9 +91,9 @@
               <td>
                 <input
                   type="image"
-                  onclick="location.href='/idFind';"
+                  onclick="location.href='/member/idFindForm';"
                   ,
-                  src="../img/member/btn_id_find.gif"
+                  src="/img/member/btn_id_find.gif"
                 />
               </td>
             </tr>
@@ -102,7 +102,7 @@
               <td>
                 <input
                   type="image"
-                  onclick="location.href='/passwordFind';"
+                  onclick="location.href='/member/passwordFindForm';"
                   ,
                   src="../img/member/btn_pw_find.gif"
                 />

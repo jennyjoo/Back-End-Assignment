@@ -7,9 +7,9 @@
     <title>회원가입2</title>
 
     <!-- Main CSS : Header, Main, Footer -->
-    <link rel="stylesheet" href="../css/main.css" />
-    <link rel="stylesheet" href="../css/common.css" />
-    <link rel="stylesheet" href="../css/member/join.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/css/member/join.css" />
 
     <!-- Bootstrap CSS -->
     <link
@@ -30,14 +30,6 @@
       integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
       crossorigin="anonymous"
     ></script>
-
-    <script>
-      $(document).ready(function () {
-        $("#headerTop").load("../headerTop-sub.html");
-        $("#header").load("../header-sub.html");
-        $("#footer").load("../footer-sub.html");
-      });
-    </script>
   </head>
   <body>
     <!-- 헤더 -->
@@ -93,7 +85,7 @@
         <div>기본정보</div>
         <form
           id="joinForm"
-          action="join"
+          action="/member/join"
           method="post"
           onsubmit="return checkJoin()"
         >
@@ -276,7 +268,7 @@
 
         console.log("userID : ", document.getElementById("userID").value);
 
-        fetch("http://localhost:8080/fetchDupl", {
+        fetch("http://localhost:8080/member/fetchDupl", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

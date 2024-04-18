@@ -18,7 +18,7 @@ public class CompanyQnaReply {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private Long qna_reply_idx;
+    private Long qnaReplyIdx;
 
     @Column
     private String qnaReplyContent;

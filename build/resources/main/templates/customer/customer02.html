@@ -141,7 +141,7 @@
           </tr>
           <tr
             th:each="list, status : ${dto}"
-            th:onclick="|location.href='/community/customer/customer2_2?no=${list.qnaIdx}'|"
+            th:onclick="|location.href='/customer/qna/verifyForm?no=${list.qnaIdx}'|"
           >
             <td th:text="${status.count}">5</td>
             <td>
@@ -183,7 +183,8 @@
     </div>
 
     <!-- 푸터 -->
-    <div id="footer"></div>
+    <!-- <div id="footer"></div> -->
+    <div th:replace="/fragments/footer.html :: fragment-footer"></div>
 
     <script>
       function openWindow(no) {

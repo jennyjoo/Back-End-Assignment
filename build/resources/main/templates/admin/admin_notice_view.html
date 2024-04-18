@@ -114,7 +114,6 @@
         </div>
       </div>
     </nav>
-   
 
     <!-- 메인 -->
     <!-- COMMON -->
@@ -142,7 +141,9 @@
         <ul>
           <li><a href="./admin_member.html">회원 관리</a></li>
           <li>
-            <a href="./admin_notice.html" class="adminSideActive">공지사항 관리</a>
+            <a href="./admin_notice.html" class="adminSideActive"
+              >공지사항 관리</a
+            >
           </li>
         </ul>
       </div>
@@ -152,42 +153,43 @@
           <h3>공지사항 관리</h3>
         </div>
         <div class="noticeViewTitle adminDiv2">
-          <span>[일반]타이틀1</span>
+          <span th:text="${dto.noticeTitle}">[일반]타이틀1</span>
           <span>
-            <span>글쓴이:admin</span>
-            <span>글번호:5</span>
+            <span th:text="${dto.noticeMemberId}">글쓴이:admin</span>
+            <span th:text="| 글번호 : ${dto.noticeIdx}|">글번호:5</span>
           </span>
         </div>
-        <div class="adminDiv2">
-          <div class="noticeViewContent">
-            <textarea rows="5" cols="50" id="editor4" name="editor4">
-						내용입니다.1</textarea
-            >
+        <form
+          action="/admin/notice/modify"
+          name="noticeForm"
+          id="noticeForm"
+          method="post"
+        >
+          <input type="hidden" th:value="${dto.noticeIdx}" name="noticeIdx" />
+          <div class="adminDiv2">
+            <div class="noticeViewContent">
+              <textarea
+                rows="5"
+                cols="50"
+                id="noticeContent"
+                name="noticeContent"
+                th:text="${dto.noticeContent}"
+              >
+              </textarea>
+            </div>
           </div>
-        </div>
-        <div class="noticeViewBtns adminDiv2">
-          <div>
-            <a href="/admin_notice_modify?notice_idx=1">수정</a>
-            <a href="/admin_notice_delete?notice_idx=1">삭제</a>
+          <div class="noticeViewBtns adminDiv2">
+            <div>
+              <input type="submit" value="수정" />
+              <a th:href="|/admin/notice/delete?no=${dto.noticeIdx}|">삭제</a>
+            </div>
+            <div>
+              <a href="/admin/noticeList">목록</a>
+            </div>
           </div>
-          <div>
-            <a href="/admin_notice">목록</a>
-          </div>
-        </div>
+        </form>
       </div>
     </div>
-
-    <script src="https://cdn.ckeditor.com/4.15.1/standard/ckeditor.js"></script>
-    <!-- <script>CKEDITOR.replace('editor4');</script> -->
-    <script>
-      var ckeditor_config = {
-        resize_enaleb: false,
-        enterMode: CKEDITOR.ENTER_BR,
-        shiftEnterMode: CKEDITOR.ENTER_P,
-        filebrowserUploadUrl: "/ckUpload",
-      };
-      CKEDITOR.replace("editor4", ckeditor_config);
-    </script>
 
     <!-- footer -->
     <div class="footer">
@@ -244,6 +246,35 @@
         });
         $("#back-to-top").tooltip("show");
       });
+    </script>
+
+    <script>
+      const submitForm = (button) => {
+        const url = button.getAttribute("href");
+
+        const requestData = {
+          noticeContent: document.getElementById("noticeContent").innerText,
+        };
+
+        console.log("reqDat : ", requestData);
+
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((json) => {
+            console.log("json", json);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      };
     </script>
   </body>
 </html>

@@ -13,9 +13,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +27,11 @@ public class AdminService {
     private static final String[] categories = {"all", "id", "name", "email", "address", "phone"};
 
 
+    @Transactional
+    public CompanyNotice addNotice(CompanyNotice notice){
+        return noticeRepository.save(notice);
+    }
+
     @Transactional(readOnly = true)
     public Optional<MemberAdmin> findById(String adminId){
         return adminRepository.findMemberAdminByMemberId(adminId);
@@ -37,41 +40,61 @@ public class AdminService {
 
     @Transactional(readOnly = true)
     public List<MemberDto> findMembersByCategory(String inputCategory,
-                                          String inputSearchKeyword,
-                                          String orderSelect){
+                                                    String inputSearchKeyword,
+                                                    String orderSelect,
+                                                    int pageSelect){
 
         String category = inputCategory.toLowerCase();
         String searchKeyword = inputSearchKeyword.toLowerCase();
 
         int idx = orderSelect.lastIndexOf("_");
+
         String direction = orderSelect.substring(idx + 1);
         String orderCol = orderSelect.substring(0, idx);
-        System.out.println("order col : " + orderCol);
-        System.out.println("order dir : " + direction);
 
 
         List<Member> members = new ArrayList<>();
         if(category.equals("all")){
-            members = memberRepository.findAllByKeyword(searchKeyword, orderCol, direction.toUpperCase());
-            return members.stream().map(MemberDto::new).collect(Collectors.toList());
+
+            members = findAllByKeyword(searchKeyword, pageSelect);
 
         }
 
         if(category.equals("id")){
-            members = memberRepository.findMembersByIdLike(searchKeyword, orderCol, direction.toUpperCase());
-            return members.stream().map(MemberDto::new).collect(Collectors.toList());
+            members = findMembersByIdLike(searchKeyword, pageSelect);
 
         }
 
         if(category.equals("name")){
-            members = memberRepository.findMembersByNameLike(searchKeyword, orderCol, direction.toUpperCase());
-            return members.stream().map(MemberDto::new).collect(Collectors.toList());
+            members = findMembersByNameLike(searchKeyword, pageSelect);
+
         }
 
         if(category.equals("email")){
-            members = memberRepository.findMembersByEmailLike(searchKeyword, orderCol, direction.toUpperCase());
-            return members.stream().map(MemberDto::new).collect(Collectors.toList());
+            members = findMembersByEmailLike(searchKeyword, pageSelect);
         }
+
+        Collections.sort(members, new Comparator<Member>() {
+            @Override
+            public int compare(Member o1, Member o2) {
+
+                if(orderCol.equals("memberId")){
+                    if(direction.toLowerCase().equals("desc")){
+                        return o1.getMemberId().compareTo(o2.getMemberId());
+                    }
+                    return o2.getMemberId().compareTo(o1.getMemberId());
+                }
+
+                if(orderCol.equals("memberJoinDate")){
+                    if(direction.toLowerCase().equals("desc")){
+                        return o1.getMemberJoinDate().compareTo(o2.getMemberJoinDate());
+                    }
+
+                    return o2.getMemberJoinDate().compareTo(o1.getMemberJoinDate());
+                }
+                return 0;
+            }
+        });
 
         return members.stream().map(MemberDto::new).collect(Collectors.toList());
 
@@ -80,38 +103,59 @@ public class AdminService {
 
     @Transactional(readOnly = true)
     public List<CompanyNoticeDto> findNoticesByCategory(String category,
-                                                 String inputSearchKeyword,
-                                                 String orderSelect){
+                                                        String inputSearchKeyword,
+                                                        String orderSelect,
+                                                        int pageSelect){
 
         String searchKeyword = inputSearchKeyword.toLowerCase();
 
         int idx = orderSelect.lastIndexOf("_");
+
         String direction = orderSelect.substring(idx + 1);
         String orderCol = orderSelect.substring(0, idx);
 
 
         List<CompanyNotice> notices = new ArrayList<>();
         if(category.equals("all")){
-            notices = noticeRepository.findAllByKeyword(searchKeyword, orderCol, direction.toUpperCase());
+            notices = findAllNoticesByKeyword(searchKeyword, pageSelect);
             return notices.stream().map(CompanyNoticeDto::new).collect(Collectors.toList());
 
         }
 
         if(category.equals("noticeMemberId")){
-            notices = noticeRepository.findNoticesByMemberIdLike(searchKeyword, orderCol, direction.toUpperCase());
+            notices = findNoticesByMemberIdLike(searchKeyword, pageSelect);
             return notices.stream().map(CompanyNoticeDto::new).collect(Collectors.toList());
 
         }
 
         if(category.equals("noticeContent")){
-            notices = noticeRepository.findNoticesByContentLike(searchKeyword, orderCol, direction.toUpperCase());
+            notices = findNoticesByContentLike(searchKeyword, pageSelect);
             return notices.stream().map(CompanyNoticeDto::new).collect(Collectors.toList());
         }
 
         if(category.equals("noticeTitle")){
-            notices = noticeRepository.findNoticesByTitleLike(searchKeyword, orderCol, direction.toUpperCase());
+            notices = noticeRepository.findNoticesByTitleLike(searchKeyword);
             return notices.stream().map(CompanyNoticeDto::new).collect(Collectors.toList());
         }
+
+        Collections.sort(notices, new Comparator<CompanyNotice>() {
+            @Override
+            public int compare(CompanyNotice o1, CompanyNotice o2) {
+                if(orderCol.toLowerCase().equals("id")){
+                    if(direction.toLowerCase().equals("desc")){
+                        return o1.getNoticeMemberId().compareTo(o2.getNoticeMemberId());
+                    }
+                    return o2.getNoticeMemberId().compareTo(o1.getNoticeMemberId());
+                }
+                if(orderCol.toLowerCase().equals("noticeDate")){
+                    if(direction.toLowerCase().equals("desc")){
+                        return o1.getNoticeDate().compareTo(o1.getNoticeDate());
+                    }
+                    return o2.getNoticeDate().compareTo(o1.getNoticeDate());
+                }
+                return 0;
+            }
+        });
 
         return notices.stream().map(CompanyNoticeDto::new).collect(Collectors.toList());
 
@@ -150,4 +194,91 @@ public class AdminService {
     public CompanyNotice updateNotice(CompanyNotice notice){
         return noticeRepository.save(notice);
     }
+
+    private List<CompanyNotice> findAllNoticesByKeyword(String keyword, int pageSize){
+        if(pageSize == 5){
+            return noticeRepository.findAllByKeywordLimit5(keyword);
+        }
+        else if(pageSize == 10){
+            return noticeRepository.findAllByKeywordLimit10(keyword);
+        }
+
+        return noticeRepository.findAllByKeyword(keyword);
+
+    }
+
+
+    private List<CompanyNotice> findNoticesByMemberIdLike(String keyword, int pageSize){
+        if(pageSize == 5){
+            return noticeRepository.findNoticesByMemberIdLikeLimit5(keyword);
+        }
+        else if(pageSize == 10) return noticeRepository.findNoticesByMemberIdLikeLimit10(keyword);
+
+
+        return noticeRepository.findNoticesByMemberIdLike(keyword);
+
+    }
+
+    private List<CompanyNotice> findNoticesByContentLike(String keyword, int pageSize){
+        if(pageSize == 5){
+            return noticeRepository.findNoticesByContentLikeLimit5(keyword);
+        }
+        else if(pageSize == 10){
+            return noticeRepository.findNoticesByContentLikeLimit10(keyword);
+        }
+
+        return noticeRepository.findNoticesByContentLike(keyword);
+    }
+
+
+    private List<Member> findAllByKeyword(String searchKeyword, int pageSize){
+        if(pageSize == 5){
+            return memberRepository.findAllByKeywordLimit5(searchKeyword);
+        }
+        else if(pageSize == 10){
+            return memberRepository.findAllByKeywordLimit10(searchKeyword);
+        }
+
+        return memberRepository.findAllByKeyword(searchKeyword);
+
+
+    }
+
+    private List<Member> findMembersByIdLike(String searchKeyword, int pageSize){
+        if(pageSize == 5){
+            return memberRepository.findMembersByIdLikeLimit5(searchKeyword);
+        } else if (pageSize == 10) {
+
+            return memberRepository.findMembersByNameLikeLimit10(searchKeyword);
+        }
+
+        return memberRepository.findMembersByIdLike(searchKeyword);
+    }
+
+    private List<Member> findMembersByNameLike(String searchKeyword, int pageSize){
+        if(pageSize == 5){
+            return memberRepository.findMembersByNameLikeLimit5(searchKeyword);
+        }
+        else if(pageSize == 10){
+            return memberRepository.findMembersByNameLikeLimit10(searchKeyword);
+        }
+
+        return memberRepository.findMembersByNameLike(searchKeyword);
+    }
+
+    private List<Member> findMembersByEmailLike(String searchKeyword, int pageSize){
+
+        if(pageSize == 5){
+            return memberRepository.findMembersByEmailLikeLimit5(searchKeyword);
+        }
+        else if(pageSize == 10){
+            return memberRepository.findMembersByEmailLikeLimit10(searchKeyword);
+        }
+
+        return memberRepository.findMembersByEmailLike(searchKeyword);
+
+    }
+
+
+
 }

@@ -63,7 +63,7 @@ public class MemberController {
 
             if(member.getMemberPw().equals(dto.getLoginPW())){
 
-                UserSession userSession = UserSession.makeUserSession();
+                UserSession userSession = UserSession.makeUserSession(member.getMemberId());
                 userSession.login();
 
                 session.setAttribute("userSession", userSession);

@@ -69,15 +69,32 @@ public class CustomerController {
     }
 
 
+//    @GetMapping("/qna/list")
+//    public String qnaList(HttpSession session, Model model){
+//
+//        if(!isLogin(session)){
+//            return "redirect:/userNotFound";
+//        }
+////
+////        List<CompanyQnaDto> dto = qnaService.findAll();
+////        model.addAttribute("dto", dto);
+//
+//        return "/customer/customer02";
+//    }
+
     @GetMapping("/qna/list")
-    public String qnaList(HttpSession session, Model model){
+    public String qnaList(@RequestParam(defaultValue = "qnaDate") String category,
+                          @RequestParam(defaultValue = "") String searchKeyword,
+                          HttpSession session, Model model){
 
         if(!isLogin(session)){
             return "redirect:/userNotFound";
         }
 
-        List<CompanyQnaDto> dto = qnaService.findAll();
+//        List<CompanyQnaDto> dto = qnaService.findAll();
+        List<CompanyQnaDto> dto = qnaService.findQnasBy(category, searchKeyword);
         model.addAttribute("dto", dto);
+        model.addAttribute("category", category);
 
         return "/customer/customer02";
     }
@@ -136,11 +153,21 @@ public class CustomerController {
         CompanyQnaDto dto = null;
         if(optional.isPresent()){
             dto = new CompanyQnaDto(optional.get());
+
+            UserSession userSession = (UserSession) session.getAttribute("userSession");
+            if(userSession.getIsVerified() && userSession.getVerifiedIdx().equals(dto.getQnaIdx())){
+
+                userSession.invalidateVerification(dto.getQnaIdx());
+                session.setAttribute("userSession", userSession);
+
+                model.addAttribute("dto", dto);
+
+                return "/customer/customer02_4";
+            }
         }
 
-        model.addAttribute("dto", dto);
 
-        return "/customer/customer02_4";
+        return "redirect:/customer/qna/list";
 
     }
 

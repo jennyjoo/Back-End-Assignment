@@ -4,6 +4,7 @@ import com.study.Ex14ReadDB.UserSession;
 import com.study.Ex14ReadDB.domain.Community.Entity.CompanyNotice;
 import com.study.Ex14ReadDB.domain.Community.dto.CompanyNoticeDto;
 import com.study.Ex14ReadDB.domain.Community.dto.Request.RequestModifyNoticeDto;
+import com.study.Ex14ReadDB.domain.Community.dto.Request.RequestWriteNoticeDto;
 import com.study.Ex14ReadDB.domain.Community.dto.Response.ResponseModifyNoticeDto;
 import com.study.Ex14ReadDB.domain.MemberDomain.AdminService;
 import com.study.Ex14ReadDB.domain.MemberDomain.MemberAdmin;
@@ -12,6 +13,7 @@ import com.study.Ex14ReadDB.domain.Member.Dto.MemberDto;
 import com.study.Ex14ReadDB.domain.Member.Dto.Request.RequestLoginDto;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +47,7 @@ public class AdminController {
             MemberAdmin admin = optional.get();
             if(admin.getMemberPw().equals(requestDto.getLoginPW())){
 
-                UserSession adminSession = UserSession.makeAdminSession();
+                UserSession adminSession = UserSession.makeAdminSession(admin.getMemberId());
                 adminSession.login();
                 session.setAttribute("userSession", adminSession);
 
@@ -60,22 +62,20 @@ public class AdminController {
     public String memberList(HttpSession session,
                              Model model){
 
-
-        if(isAdmin(session)){
-
-            List<MemberDto> dto = memberService.findAll();
-            model.addAttribute("dto", dto);
-
-            return "/admin/admin_member";
+        if(!isAdmin(session)){
+            return "redirect:/admin";
         }
 
-        return "redirect:/admin";
+        return "redirect:/admin/memberListSearch";
+
+
     }
 
     @GetMapping("/memberListSearch")
-    public String memberListPost(@RequestParam(name = "searchSelect") String searchSelect,
+    public String memberListPost(@RequestParam(name = "searchSelect", defaultValue = "all") String searchSelect,
                                  @RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword,
-                                 @RequestParam(name = "orderSelect", defaultValue = "all") String orderSelect,
+                                 @RequestParam(name = "orderSelect", defaultValue = "memberId_asc") String orderSelect,
+                                 @RequestParam(name = "pageSelect", defaultValue = "0") int pageSelect,
                                  HttpSession session,
                                  Model model){
 
@@ -83,10 +83,18 @@ public class AdminController {
             return "redirect:/admin";
         }
 
-        List<MemberDto> dto = adminService.findMembersByCategory(searchSelect,searchKeyword, orderSelect);
+//        PageRequest pageabe = page(size limit orderby("memberIdx").ascending()
+
+        System.out.println("searchSelect : " + searchSelect);
+        System.out.println("searchKeyword = " + searchKeyword);
+        System.out.println("orderSelect = " + orderSelect);
+        System.out.println("pageSelect = " + pageSelect);
+
+        List<MemberDto> dto = adminService.findMembersByCategory(searchSelect, searchKeyword, orderSelect, pageSelect);
         model.addAttribute("dto", dto);
         model.addAttribute("category", searchSelect);
         model.addAttribute("selected", orderSelect);
+        model.addAttribute("pageSelect", pageSelect);
         model.addAttribute("searchKeyword", searchKeyword);
 
         return "/admin/admin_member";
@@ -103,14 +111,15 @@ public class AdminController {
         List<CompanyNoticeDto> dto = adminService.findAllNotice();
         model.addAttribute("dto", dto);
 
-        return "/admin/admin_notice";
+        return "redirect:/admin/noticeListSearch";
 
     }
 
     @GetMapping("/noticeListSearch")
-    public String noticeListSearch(@RequestParam(name = "searchSelect") String searchSelect,
+    public String noticeListSearch(@RequestParam(name = "searchSelect", defaultValue = "all") String searchSelect,
                                    @RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword,
-                                   @RequestParam(name = "orderSelect", defaultValue = "all") String orderSelect,
+                                   @RequestParam(name = "orderSelect", defaultValue = "memberId_asc") String orderSelect,
+                                   @RequestParam(name = "pageSelect", defaultValue = "0") int pageSelect,
                                    HttpSession session,
                                    Model model){
 
@@ -118,17 +127,18 @@ public class AdminController {
             return "redirect:/admin";
         }
 
-        List<CompanyNoticeDto> dto = adminService.findNoticesByCategory(searchSelect, searchKeyword, orderSelect);
+        List<CompanyNoticeDto> dto = adminService.findNoticesByCategory(searchSelect, searchKeyword, orderSelect, pageSelect);
         model.addAttribute("dto", dto);
         model.addAttribute("category", searchSelect);
         model.addAttribute("selected", orderSelect);
+        model.addAttribute("pageSelect", pageSelect);
         model.addAttribute("searchKeyword", searchKeyword);
 
         return "/admin/admin_notice";
 
     }
 
-    @GetMapping("/notice/write")
+    @GetMapping("/notice/write/form")
     public String noticeWrite(HttpSession session){
         if(!isAdmin(session)){
             return "redirect:/admin";
@@ -137,6 +147,29 @@ public class AdminController {
         return "/admin/admin_notice_write";
     }
 
+    @PostMapping("/notice/write/action")
+    @ResponseBody
+    public String noticeWriteAction(@ModelAttribute RequestWriteNoticeDto requestDto,
+                                    HttpSession session){
+
+        if(!isAdmin(session)){
+            return "<script>alert('권한이 없습니다'); location.href='/admin';</script>";
+        }
+
+
+        UserSession userSession = (UserSession) session.getAttribute("userSession");
+
+        String adminId = userSession.getLoginId();
+        CompanyNotice notice = requestDto.toEntity(adminId);
+        CompanyNotice result = adminService.addNotice(notice);
+
+        if(notice == null){
+            return "<script>alert('등록 실패'); history.back();</script>";
+        }
+
+
+        return "<script>alert('등록 성공'); location.href='/admin/noticeList';</script>";
+    }
 
     @GetMapping("/notice/view")
     public String noticeDetail(@RequestParam Long no,

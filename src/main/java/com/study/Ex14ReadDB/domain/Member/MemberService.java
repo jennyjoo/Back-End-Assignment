@@ -18,6 +18,13 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
+    public List<MemberDto> findAllLimit5(){
+        Sort sort = Sort.by(Sort.Direction.DESC, "memberIdx");
+        List<Member> members = memberRepository.findAllByLimit5();
+
+        return members.stream().map(MemberDto::new).collect(Collectors.toList());
+    }
+    @Transactional(readOnly = true)
     public List<MemberDto> findAll(){
         Sort sort = Sort.by(Sort.Direction.DESC, "memberIdx");
         List<Member> members = memberRepository.findAll(sort);
@@ -41,9 +48,10 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public Boolean existsByMemberId(String memberId){
-        Optional<Member> member = memberRepository.findMemberByMemberId(memberId);
 
-        if(member.isPresent()){
+        Boolean hasId = memberRepository.existsMemberByMemberId(memberId);
+
+        if(hasId){
             return true;
         }
         else return false;

@@ -163,23 +163,37 @@
           src="/img/customer/write.gif"
         />
       </div>
-      <table>
-        <tr>
-          <td>
-            <select name="내용" id="">
-              <option value="">제목</option>
-              <option value="">내용</option>
-              <option value="">작성자</option>
-            </select>
-          </td>
-          <td>
-            <input type="text" />
-          </td>
-          <td>
-            <input type="image" src="/img/customer/search.gif" />
-          </td>
-        </tr>
-      </table>
+      <form action="/customer/qna/list" method="get">
+        <table>
+          <tr>
+            <td>
+              <select name="category" id="category">
+                <option
+                  value="qnaTitle"
+                  th:selected="${selected} == 'qnaTitle'"
+                >
+                  제목
+                </option>
+                <option
+                  value="qnaContent"
+                  th:selected="${selected} == 'qnaContent'"
+                >
+                  내용
+                </option>
+                <option value="qnaName" th:selected="${selected} == 'qnaName'">
+                  작성자
+                </option>
+              </select>
+            </td>
+            <td>
+              <input type="text" name="searchKeyword" />
+            </td>
+            <td>
+              <input type="image" src="/img/customer/search.gif" />
+            </td>
+          </tr>
+        </table>
+      </form>
     </div>
 
     <!-- 푸터 -->

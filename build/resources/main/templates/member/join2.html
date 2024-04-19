@@ -33,8 +33,13 @@
   </head>
   <body>
     <!-- 헤더 -->
-    <div id="headerTop"></div>
-    <div id="header" class="sticky-top"></div>
+    <!-- <div id="headerTop"></div> -->
+    <div th:replace="/fragments/headerTop.html :: fragment-headerTop"></div>
+    <!-- <div id="header" class="sticky-top"></div> -->
+    <div
+      th:replace="/fragments/header.html :: fragment-header"
+      class="sticky-top"
+    ></div>
 
     <!-- 메인 -->
     <!-- COMMON -->
@@ -85,21 +90,24 @@
         <div>기본정보</div>
         <form
           id="joinForm"
+          name="joinForm"
           action="/member/join"
           method="post"
           onsubmit="return checkJoin()"
         >
-          <input id="isDupl" type="hidden" value="true" />
-          <div id="isDupl" style="display: none">true</div>
+          <input id="isDupl" type="hidden" value="true" name="isDupl" />
           <table>
             <tr>
               <td>아이디</td>
               <td>
-                <input type="text" name="userID" id="userID" required />
-                <img
-                  src="../img/member/btn_iddupl.gif"
-                  onclick="fetch_dupl()"
+                <input
+                  type="text"
+                  name="userID"
+                  id="userID"
+                  onchange="checkID()"
+                  required
                 />
+                <img src="/img/member/btn_iddupl.gif" onclick="fetch_dupl()" />
                 (영문 소문자, 숫자로 4~16자)
               </td>
             </tr>
@@ -254,6 +262,11 @@
         }
 
         return false;
+      };
+
+      const checkID = () => {
+        document.joinForm.isDupl.value = "fail";
+        console.log("document.joinForm", document.joinForm.isDupl.value);
       };
 
       const fetch_dupl = () => {

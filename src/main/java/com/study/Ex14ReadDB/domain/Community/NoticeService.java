@@ -19,6 +19,30 @@ public class NoticeService {
     private final NoticeRepository noticeRepository;
 
 
+    public List<CompanyNoticeListDto> findAllNoticesBy(String category, String keyword){
+        List<CompanyNoticeListDto> dto = null;
+        if(category.equals("noticeDate")) {
+            dto = noticeRepository.findAllOrderByNoticeDateDesc()
+                    .stream()
+                    .map(CompanyNoticeListDto::new)
+                    .collect(Collectors.toList());
+        }
+        else if(category.equals("noticeTitle")){
+            dto = noticeRepository.findAllByNoticeTitle(keyword)
+                    .stream()
+                    .map(CompanyNoticeListDto::new)
+                    .collect(Collectors.toList());
+        }
+        else if(category.equals("noticeContent")){
+            dto = noticeRepository.findAllByNoticeContent(keyword)
+                    .stream()
+                    .map(CompanyNoticeListDto::new)
+                    .collect(Collectors.toList());
+        }
+        return dto;
+
+    }
+
     @Transactional(readOnly = true)
     public List<CompanyNoticeListDto> findAllList(){
         List<CompanyNotice> notices = noticeRepository.findAll();
@@ -45,26 +69,26 @@ public class NoticeService {
         return dto;
     }
 
-    @Transactional(readOnly = true)
-    public List<CompanyNoticeListDto> findByTitle(String title){
-        List<CompanyNotice> notices = noticeRepository.findByTitleLike(title);
+//    @Transactional(readOnly = true)
+//    public List<CompanyNoticeListDto> findByTitle(String title){
+//        List<CompanyNotice> notices = noticeRepository.findByTitleLike(title);
+//
+//        return notices.stream().map(CompanyNoticeListDto::new).collect(Collectors.toList());
+//    }
+//
+//    @Transactional(readOnly = true)
+//    public List<CompanyNoticeListDto> findByContent(String content){
+//        List<CompanyNotice> notices = noticeRepository.findByContentLike(content);
+//
+//        return notices.stream().map(CompanyNoticeListDto::new).collect(Collectors.toList());
+//    }
 
-        return notices.stream().map(CompanyNoticeListDto::new).collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<CompanyNoticeListDto> findByContent(String content){
-        List<CompanyNotice> notices = noticeRepository.findByContentLike(content);
-
-        return notices.stream().map(CompanyNoticeListDto::new).collect(Collectors.toList());
-    }
 
 
-
-    @Transactional(readOnly = true)
-    public List<CompanyNoticeListDto> findByMemberId(String memberId){
-        List<CompanyNotice> notices = noticeRepository.findByMemberIdLike(memberId);
-
-        return notices.stream().map(CompanyNoticeListDto::new).collect(Collectors.toList());
-    }
+//    @Transactional(readOnly = true)
+//    public List<CompanyNoticeListDto> findByMemberId(String memberId){
+//        List<CompanyNotice> notices = noticeRepository.findByMemberIdLike(memberId);
+//
+//        return notices.stream().map(CompanyNoticeListDto::new).collect(Collectors.toList());
+//    }
 }

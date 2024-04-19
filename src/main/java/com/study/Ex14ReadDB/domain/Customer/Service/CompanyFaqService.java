@@ -20,7 +20,6 @@ public class CompanyFaqService {
 
     @Transactional(readOnly = true)
     public List<CompanyFaqDto> findAll(){
-
         Sort sort = Sort.by(Sort.Direction.DESC, "faqIdx");
 
         List<CompanyFaq> faqs = companyFaqRepository.findAll(sort);

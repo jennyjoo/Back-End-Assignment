@@ -63,7 +63,11 @@
         <div><p>The design and maintenance are excellent.</p></div>
       </div>
       <div class="loginMain">
-        <form action="/member/loginAction" method="post">
+        <form
+          action="/member/loginAction"
+          method="post"
+          onsubmit="return checkValue(this)"
+        >
           <table class="main1">
             <tr>
               <td>
@@ -78,7 +82,7 @@
                 <input
                   class="loginImg"
                   type="image"
-                  src="../img/member/btn_login.gif"
+                  src="/img/member/btn_login.gif"
                 />
               </td>
             </tr>
@@ -116,5 +120,16 @@
     <!-- 푸터 -->
     <!--  <div id="footer"></div>-->
     <div th:replace="/fragments/footer.html :: fragment-footer"></div>
+
+    <script>
+      const checkValue = (form) => {
+        if (!form.loginID.value || !form.loginPW.value) {
+          alert("전부 입력해주세요");
+          return false;
+        }
+
+        return true;
+      };
+    </script>
   </body>
 </html>

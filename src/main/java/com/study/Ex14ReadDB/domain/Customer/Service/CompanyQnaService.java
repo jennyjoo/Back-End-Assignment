@@ -26,4 +26,22 @@ public class CompanyQnaService {
     public Optional<CompanyQna> findById(Long id){
         return repository.findById(id);
     }
+
+    public List<CompanyQnaDto> findQnasBy(String category, String keyword){
+
+        List<CompanyQnaDto> dto = null;
+        if(category.equals("qnaDate")){
+            dto = repository.findQnasOrderByQnaDateDesc().stream().map(CompanyQnaDto::new).collect(Collectors.toList());
+        }
+        else if(category.equals("qnaTitle")){
+            dto = repository.findQnasByQnaTitle(keyword).stream().map(CompanyQnaDto::new).collect(Collectors.toList());
+        }
+        else if(category.equals("qnaContent")){
+            dto = repository.findQnasByQnaContent(keyword).stream().map(CompanyQnaDto::new).collect(Collectors.toList());
+        }else if(category.equals("qnaName")){
+            dto = repository.findQnasByQnaName(keyword).stream().map(CompanyQnaDto::new).collect(Collectors.toList());
+        }
+
+        return dto;
+    }
 }

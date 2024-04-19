@@ -13,43 +13,66 @@ import java.util.Optional;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
+
+    Boolean existsMemberByMemberId(String memberId);
+    @Query(value = "SELECT * FROM company_member m ORDER BY m.member_idx LIMIT 5", nativeQuery = true)
+    List<Member> findAllByLimit5();
     Optional<Member> findMemberByMemberId(String memberId);
 
     Optional<Member> findMemberByMemberNameAndMemberEmail(String memberName, String memberEmail);
 
     Optional<Member> findMemberByMemberIdAndMemberPw(String memberId, String memberPw);
 
-    @Query("SELECT m from Member m WHERE lower(m.memberId) like %:searchKeyword% " +
-            "or lower(m.memberEmail) like %:searchKeyword% " +
-            "or lower(m.memberName) like %:searchKeyword% " +
-            "ORDER BY CASE WHEN upper(:direction) = 'ASC' THEN :order END ASC, " +
-            "CASE WHEN upper(:direction) = 'DESC' THEN :order END DESC")
-    List<Member> findAllByKeyword(@Param(value = "searchKeyword") String searchKeyword,
-                                  @Param(value = "order") String order,
-                                  @Param(value = "direction") String direction);
+    @Query(value = "SELECT * from company_member m WHERE lower(m.member_id) like %:searchKeyword% " +
+            "or lower(m.member_email) like %:searchKeyword% " +
+            "or lower(m.member_name) like %:searchKeyword% " , nativeQuery = true)
+    List<Member> findAllByKeyword(@Param(value = "searchKeyword") String searchKeyword);
 
-    @Query("SELECT m from Member m WHERE lower(m.memberId) like %:memberId% " +
-            "ORDER BY CASE WHEN upper(:direction) = 'ASC' THEN :order END ASC, " +
-            "CASE WHEN upper(:direction) = 'DESC' THEN :order END DESC")
-    List<Member> findMembersByIdLike(@Param(value = "memberId") String memberId,
-                                     @Param(value = "order") String order,
-                                     @Param(value = "direction") String direction);
+    @Query(value = "SELECT * from company_member m WHERE lower(m.member_id) like %:searchKeyword% " +
+            "or lower(m.member_email) like %:searchKeyword% " +
+            "or lower(m.member_name) like %:searchKeyword% " +
+            " limit 5" , nativeQuery = true)
+    List<Member> findAllByKeywordLimit5(@Param(value = "searchKeyword") String searchKeyword);
 
-    @Query("SELECT m from Member m where LOWER(m.memberName) like %:memberName% " +
-            "ORDER BY CASE WHEN upper(:direction) = 'ASC' THEN :order END ASC, " +
-            "CASE WHEN upper(:direction) = 'DESC' THEN :order END DESC")
-    List<Member> findMembersByNameLike(@Param(value = "memberName") String memberName,
-                                       @Param(value = "order") String order,
-                                       @Param(value = "direction") String direction);
+    @Query(value = "SELECT * from company_member m WHERE lower(m.member_id) like %:searchKeyword% " +
+            "or lower(m.member_email) like %:searchKeyword% " +
+            "or lower(m.member_name) like %:searchKeyword%" +
+            " limit 10 ", nativeQuery = true )
+    List<Member> findAllByKeywordLimit10(@Param(value = "searchKeyword") String searchKeyword);
 
 
+    @Query(value = "SELECT * from company_member m WHERE lower(m.member_id) like %:memberId% " , nativeQuery = true)
+    List<Member> findMembersByIdLike(@Param(value = "memberId") String memberId);
+    @Query(value = "SELECT * from company_member m WHERE lower(m.member_id) like %:memberId% " +
+            " limit 5", nativeQuery = true)
+    List<Member> findMembersByIdLikeLimit5(@Param(value = "memberId") String memberId);
 
-    @Query("SELECT m from Member m where LOWER(m.memberEmail) like %:memberEmail% " +
-            "ORDER BY CASE WHEN upper(:direction) = 'ASC' THEN :order END ASC, " +
-            "CASE WHEN upper(:direction) = 'DESC' THEN :order END DESC")
-    List<Member> findMembersByEmailLike(@Param(value = "memberEmail") String memberEmail,
-                                        @Param(value = "order") String order,
-                                        @Param(value = "direction") String direction);
+    @Query(value = "SELECT * from company_member m WHERE lower(m.member_id) like %:memberId% " +
+            " limit 10", nativeQuery = true)
+    List<Member> findMembersByIdLikeLimit10(@Param(value = "memberId") String memberId);
+
+
+    @Query(value = "SELECT * from company_member m where LOWER(m.member_name) like %:memberName% ", nativeQuery = true)
+    List<Member> findMembersByNameLike(@Param(value = "memberName") String memberName);
+    @Query(value = "SELECT * from company_member m where LOWER(m.member_name) like %:memberName% " +
+            " limit 5", nativeQuery = true)
+    List<Member> findMembersByNameLikeLimit5(@Param(value = "memberName") String memberName);
+
+    @Query(value = "SELECT * from company_member m where LOWER(m.member_name) like %:memberName% " +
+            "limit 10", nativeQuery = true)
+    List<Member> findMembersByNameLikeLimit10(@Param(value = "memberName") String memberName);
+
+
+    @Query(value = "SELECT * from company_member m where LOWER(m.member_email) like %:memberEmail% " , nativeQuery = true)
+    List<Member> findMembersByEmailLike(@Param(value = "memberEmail") String memberEmail);
+
+    @Query(value = "SELECT * from company_member m where LOWER(m.member_email) like %:memberEmail% " +
+            "limit 5", nativeQuery = true)
+    List<Member> findMembersByEmailLikeLimit5(@Param(value = "memberEmail") String memberEmail);
+
+    @Query(value = "SELECT * from company_member m where LOWER(m.member_email) like %:memberEmail% " +
+            "limit 10", nativeQuery = true)
+    List<Member> findMembersByEmailLikeLimit10(@Param(value = "memberEmail") String memberEmail);
 
 
 }

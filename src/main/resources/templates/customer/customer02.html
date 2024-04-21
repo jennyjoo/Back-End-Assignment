@@ -143,13 +143,13 @@
             th:each="list, status : ${dto}"
             th:onclick="|location.href='/customer/qna/verifyForm?no=${list.qnaIdx}'|"
           >
-            <td th:text="${status.count}">5</td>
+            <td th:text="${status.count}"></td>
             <td>
               <img src="/img/customer/icon_sct.gif" />
               <span th:text="${list.qnaTitle}"></span>
             </td>
-            <td th:text="${list.qnaName}">hong</td>
-            <td th:text="${list.qnaDate}">2019-06-19</td>
+            <td th:text="${list.qnaName}"></td>
+            <td th:text="${#temporals.format(list.qnaDate, 'yyyy-MM-dd')}"></td>
           </tr>
         </table>
       </div>
@@ -186,7 +186,11 @@
               </select>
             </td>
             <td>
-              <input type="text" name="searchKeyword" />
+              <input
+                type="text"
+                name="searchKeyword"
+                th:value="${searchKeyword}"
+              />
             </td>
             <td>
               <input type="image" src="/img/customer/search.gif" />

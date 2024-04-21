@@ -129,7 +129,7 @@
             <tr>
               <td>이메일</td>
               <td>
-                <input type="text" name="eamilID" required />@<input
+                <input type="text" name="emailID" required />@<input
                   type="text"
                   name="emailDomain"
                 />
@@ -176,24 +176,7 @@
             <tr>
               <td>생년월일</td>
               <td>
-                <select
-                  name="year"
-                  id="year"
-                  title="년도"
-                  class="birthdaySelect"
-                ></select>
-                <select
-                  name="month"
-                  id="month"
-                  title="월"
-                  class="birthdaySelect"
-                ></select>
-                <select
-                  name="day"
-                  id="day"
-                  title="일"
-                  class="birthdaySelect"
-                ></select>
+                <input type="date" name="memberBirthDate" />
               </td>
             </tr>
           </table>
@@ -225,22 +208,24 @@
         const pw1 = form.userPW.value;
         const pw2 = form.userPWCheck.value;
         const name = form.userName.value;
-        const eamilID = form.eamilID.value;
+        const emailID = form.emailID.value;
         const emailDomain = form.emailDomain.value;
         const passwordCheckQuestion = form.passwordCheckQuestion.value;
         const passwordCheckAnswer = form.passwordCheckAnswer.value;
+        const memberBirthDate = form.memberBirthDate.value;
 
-        if (
-          !userId ||
-          !name ||
-          !pw1 ||
-          !pw2 ||
-          !eamilID ||
-          !emailDomain ||
-          !passwordCheckAnswer ||
-          passwordCheckQuestion == "0"
-        ) {
-          alert("값을 다 입력해주세요");
+        if (!userId) {
+          alert("아이디가 입력되지 않았습니다");
+          return false;
+        }
+
+        if (!pw1) {
+          alert("비밀번호가 입력되지 않았습니다");
+          return false;
+        }
+
+        if (!pw2) {
+          alert("비밀번호 확인을 입력해주세요");
           return false;
         }
 
@@ -250,7 +235,27 @@
         }
 
         if (pw1 != pw2) {
-          alert("비밀번호 확인 부탁드립니다");
+          alert("암호가 일치하지 않습니다");
+          return false;
+        }
+
+        if (!name) {
+          alert("이름을 입력주세요");
+          return false;
+        }
+
+        if (!emailID || !emailDomain) {
+          alert("이메일 주소를 올바르게 입력해주세요");
+          return false;
+        }
+
+        if (!memberBirthDate) {
+          alert("생년월일을 입력해주세요");
+          return false;
+        }
+
+        if (!passwordCheckAnswer || String(passwordCheckQuestion) == "0") {
+          alert("비밀번호 확인 답변을 입력해주세요");
           return false;
         }
 
@@ -258,6 +263,20 @@
           return true;
         } else {
           alert("중복 확인 해주세요");
+          return false;
+        }
+
+        if (
+          !userId ||
+          !name ||
+          !pw1 ||
+          !pw2 ||
+          !emailID ||
+          !emailDomain ||
+          !passwordCheckAnswer ||
+          passwordCheckQuestion == "0"
+        ) {
+          alert("값을 모두 입력해주세요");
           return false;
         }
 

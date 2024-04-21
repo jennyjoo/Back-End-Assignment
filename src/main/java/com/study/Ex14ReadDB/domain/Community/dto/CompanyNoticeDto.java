@@ -28,6 +28,7 @@ public class CompanyNoticeDto {
         this.noticeTitle = entity.getNoticeTitle();
         this.noticeContent = entity.getNoticeContent();
         this.noticeMemberId = entity.getNoticeMemberId();
+        this.noticeDate = entity.getNoticeDate();
     }
 
 

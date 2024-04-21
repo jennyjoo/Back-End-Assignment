@@ -5,6 +5,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -20,6 +23,9 @@ public class RequestJoinDto {
     private String passwordCheckAnswer;
     private String gender;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate memberBirthDate;
+
     public Member toEntity(){
         Member member = Member.builder()
                 .memberId(userID)
@@ -30,6 +36,7 @@ public class RequestJoinDto {
                 .memberEmailReceive((receive) ? 1 : 0)
                 .memberEmail(this.emailID + "@" + this.emailDomain)
                 .memberGender(this.gender)
+                .memberBirthDate(this.memberBirthDate)
                 .build();
 
         return member;

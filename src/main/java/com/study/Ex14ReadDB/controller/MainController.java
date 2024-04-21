@@ -32,10 +32,8 @@ public class MainController {
     @GetMapping("/userNotFound")
     @ResponseBody
     public String userNotFound(){
-        return "<script>alert('로그인 해주세요'); location.href='/member/login'</script>";
+        return "<script>alert('로그인을 해주세요'); location.href='/member/login'</script>";
     }
-
-
 
 
 }

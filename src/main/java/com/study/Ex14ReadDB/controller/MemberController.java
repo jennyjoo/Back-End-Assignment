@@ -67,13 +67,13 @@ public class MemberController {
                 userSession.login();
 
                 session.setAttribute("userSession", userSession);
-                return "<script>alert('로그인 성공'); location.href='/';</script>";
+                return "<script>alert('로그인 되었습니다'); location.href='/';</script>";
             }
 
-            return "<script>alert('비밀번호가 틀렸습니다'); history.back();</script>";
+            return "<script>alert('비밀번호가 다릅니다'); history.back();</script>";
         }
 
-        return "<script>alert('그런 아이디가 없습니다'); history.back();</script>";
+        return "<script>alert('아이디가 존재하지 않습니다'); history.back();</script>";
 
     }
 

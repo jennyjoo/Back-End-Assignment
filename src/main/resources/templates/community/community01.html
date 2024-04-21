@@ -132,7 +132,7 @@
           </tr>
           <tr
             th:each="list, status : ${dto}"
-            th:onclick="|window.location.href='community01_1?no=${list.noticeIdx}'|"
+            th:onclick="|window.location.href='notice/detail?no=${list.noticeIdx}'|"
           >
             <td th:text="${status.count}"></td>
             <td th:text="${list.noticeTitle}"></td>
@@ -162,16 +162,21 @@
                 >
                   내용
                 </option>
-                <option
+                <!-- 작성자 제거 -->
+                <!-- <option
                   value="noticeMemberId"
                   th:selected="${category} == 'noticeMemberId'"
                 >
                   작성자
-                </option>
+                </option> -->
               </select>
             </td>
             <td>
-              <input type="text" name="searchKeyword" />
+              <input
+                type="text"
+                name="searchKeyword"
+                th:value="${searchKeyword}"
+              />
             </td>
             <td>
               <input type="image" src="/img/community/search.gif" />

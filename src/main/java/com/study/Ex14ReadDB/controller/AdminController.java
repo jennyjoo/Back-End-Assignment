@@ -6,13 +6,16 @@ import com.study.Ex14ReadDB.domain.Community.dto.CompanyNoticeDto;
 import com.study.Ex14ReadDB.domain.Community.dto.Request.RequestModifyNoticeDto;
 import com.study.Ex14ReadDB.domain.Community.dto.Request.RequestWriteNoticeDto;
 import com.study.Ex14ReadDB.domain.Community.dto.Response.ResponseModifyNoticeDto;
+import com.study.Ex14ReadDB.domain.Member.Member;
 import com.study.Ex14ReadDB.domain.MemberDomain.AdminService;
 import com.study.Ex14ReadDB.domain.MemberDomain.MemberAdmin;
 import com.study.Ex14ReadDB.domain.Member.MemberService;
 import com.study.Ex14ReadDB.domain.Member.Dto.MemberDto;
 import com.study.Ex14ReadDB.domain.Member.Dto.Request.RequestLoginDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -74,9 +78,11 @@ public class AdminController {
     @GetMapping("/memberListSearch")
     public String memberListPost(@RequestParam(name = "searchSelect", defaultValue = "all") String searchSelect,
                                  @RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword,
-                                 @RequestParam(name = "orderSelect", defaultValue = "memberId_asc") String orderSelect,
-                                 @RequestParam(name = "pageSelect", defaultValue = "0") int pageSelect,
+                                 @RequestParam(name = "orderSelect", defaultValue = "member_id_asc") String orderSelect,
+                                 @RequestParam(name = "page", defaultValue = "0") int page,
+                                 @RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
                                  HttpSession session,
+                                 HttpServletRequest request,
                                  Model model){
 
         if(!isAdmin(session)){
@@ -85,17 +91,22 @@ public class AdminController {
 
 //        PageRequest pageabe = page(size limit orderby("memberIdx").ascending()
 
-        System.out.println("searchSelect : " + searchSelect);
-        System.out.println("searchKeyword = " + searchKeyword);
-        System.out.println("orderSelect = " + orderSelect);
-        System.out.println("pageSelect = " + pageSelect);
 
-        List<MemberDto> dto = adminService.findMembersByCategory(searchSelect, searchKeyword, orderSelect, pageSelect);
+        // Pass request URI as a separate attribute
+        String requestURI = request.getRequestURI();
+        model.addAttribute("requestURI", requestURI);
+
+        Page< Member> paging = adminService.findMembersBy(searchSelect, searchKeyword, orderSelect, page, pageSize);
+        List<MemberDto> dto = paging.stream().map(MemberDto::new).collect(Collectors.toList());
+
         model.addAttribute("dto", dto);
         model.addAttribute("category", searchSelect);
         model.addAttribute("selected", orderSelect);
-        model.addAttribute("pageSelect", pageSelect);
+        model.addAttribute("page", page);
+        model.addAttribute("pageSize", pageSize);
         model.addAttribute("searchKeyword", searchKeyword);
+        model.addAttribute("paging", paging);
+        model.addAttribute("totalCount", adminService.memberTotalCount());
 
         return "/admin/admin_member";
     }
@@ -108,8 +119,6 @@ public class AdminController {
             return "redirect:/admin";
         }
 
-        List<CompanyNoticeDto> dto = adminService.findAllNotice();
-        model.addAttribute("dto", dto);
 
         return "redirect:/admin/noticeListSearch";
 
@@ -118,8 +127,9 @@ public class AdminController {
     @GetMapping("/noticeListSearch")
     public String noticeListSearch(@RequestParam(name = "searchSelect", defaultValue = "all") String searchSelect,
                                    @RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword,
-                                   @RequestParam(name = "orderSelect", defaultValue = "memberId_asc") String orderSelect,
-                                   @RequestParam(name = "pageSelect", defaultValue = "0") int pageSelect,
+                                   @RequestParam(name = "orderSelect", defaultValue = "notice_member_id_asc") String orderSelect,
+                                   @RequestParam(name = "page", defaultValue = "0") int page,
+                                   @RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
                                    HttpSession session,
                                    Model model){
 
@@ -127,12 +137,19 @@ public class AdminController {
             return "redirect:/admin";
         }
 
-        List<CompanyNoticeDto> dto = adminService.findNoticesByCategory(searchSelect, searchKeyword, orderSelect, pageSelect);
+        System.out.println("orderSelect = " + orderSelect);
+
+
+        Page<CompanyNotice> paging = adminService.findNoticesByCategory(searchSelect, searchKeyword, orderSelect, page, pageSize);
+        List<CompanyNoticeDto> dto = paging.stream().map(CompanyNoticeDto::new).collect(Collectors.toList());
         model.addAttribute("dto", dto);
         model.addAttribute("category", searchSelect);
         model.addAttribute("selected", orderSelect);
-        model.addAttribute("pageSelect", pageSelect);
+        model.addAttribute("page", page);
         model.addAttribute("searchKeyword", searchKeyword);
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("paging", paging);
+        model.addAttribute("totalCount", adminService.noticeTotalCount());
 
         return "/admin/admin_notice";
 

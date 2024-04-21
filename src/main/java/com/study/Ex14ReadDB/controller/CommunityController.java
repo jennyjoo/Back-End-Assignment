@@ -2,6 +2,7 @@ package com.study.Ex14ReadDB.controller;
 
 
 import com.study.Ex14ReadDB.domain.Community.NoticeService;
+import com.study.Ex14ReadDB.domain.Community.dto.CompanyNoticeDto;
 import com.study.Ex14ReadDB.domain.Community.dto.CompanyNoticeListDto;
 import com.study.Ex14ReadDB.domain.Community.dto.Request.RequestCompanyNoticeDto;
 import com.study.Ex14ReadDB.domain.Community.dto.Request.RequestSearchNoticeDto;
@@ -23,11 +24,7 @@ public class CommunityController {
 
     @GetMapping("/notice/list")
     public String noticeList(Model model){
-//        List<CompanyNoticeListDto> dto = noticeService.findAllList();
-//
-//        model.addAttribute("dto", dto);
 
-//        return "/community/community01";
 
         return "redirect:/community/notice";
     }
@@ -38,48 +35,25 @@ public class CommunityController {
                          Model model){
 
 
-        System.out.println("category : " + category);
-        System.out.println("searchKey : "+ searchKeyword);
         List<CompanyNoticeListDto> dto = noticeService.findAllNoticesBy(category, searchKeyword);
 
         model.addAttribute("dto", dto);
         model.addAttribute("category", category);
+        model.addAttribute("searchKeyword", searchKeyword);
 
 
         return "/community/community01";
     }
 
-//    @PostMapping("/notice")
-//    public String notice(@ModelAttribute RequestCompanyNoticeDto requestDto,
-//                                           HttpSession session,
-//                                           Model model){
-//
-//        Boolean isLogin = (Boolean) session.getAttribute("isLogin");
-//
-//        if(isLogin == null) return "redirect:/";
-//
-//        String category = requestDto.getCategory().toUpperCase();
-//        String content = requestDto.getNoticeContent();
-//
-//        System.out.println("category : " + category);
-//        System.out.println("content : " + content);
-//
-//        List<CompanyNoticeListDto> dto = null;
-//
-//        if(category.equals("title".toUpperCase())){
-//            dto = noticeService.findByTitle(content);
-//        }
-//        else if( category.equals("content".toUpperCase())){
-//            dto = noticeService.findByContent(content);
-//        }
-//        else if(category.equals("member".toUpperCase())){
-//            dto = noticeService.findByMemberId(content);
-//        }
-//
-//        model.addAttribute("dto", dto);
-//        return "/community/community01";
-//
-//
-//    }
+    @GetMapping("/notice/detail")
+    public String noticDetail(@RequestParam(name = "no") Long no,
+                              Model model){
+
+        CompanyNoticeDto dto = noticeService.findByIdx(no);
+        model.addAttribute("dto", dto);
+
+        return "/community/community01_1";
+
+    }
 
 }

@@ -7,6 +7,7 @@ import com.study.Ex14ReadDB.domain.Customer.Dto.CompanyQnaDto;
 import com.study.Ex14ReadDB.domain.Customer.Dto.Request.RequestAddOne2oneDto;
 import com.study.Ex14ReadDB.domain.Customer.Dto.Request.RequestQnaVerificationDto;
 import com.study.Ex14ReadDB.domain.Customer.Dto.Response.ResponseAddOne2oneDto;
+import com.study.Ex14ReadDB.domain.Customer.Entity.CompanyFaq;
 import com.study.Ex14ReadDB.domain.Customer.Entity.CompanyOne2one;
 import com.study.Ex14ReadDB.domain.Customer.Entity.CompanyQna;
 import com.study.Ex14ReadDB.domain.Customer.Service.CompanyFaqService;
@@ -14,6 +15,7 @@ import com.study.Ex14ReadDB.domain.Customer.Service.CompanyOne2oneService;
 import com.study.Ex14ReadDB.domain.Customer.Service.CompanyQnaService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +47,9 @@ public class CustomerController {
     public ResponseAddOne2oneDto one2oneWrite(@RequestBody RequestAddOne2oneDto requestDto,
                                               HttpSession session){
 
+        System.out.println("address : " + requestDto.getAddress());
+        System.out.println("name : " + requestDto.getName());
+
         ResponseAddOne2oneDto response = null;
 
         if(!isLogin(session)){
@@ -69,18 +74,6 @@ public class CustomerController {
     }
 
 
-//    @GetMapping("/qna/list")
-//    public String qnaList(HttpSession session, Model model){
-//
-//        if(!isLogin(session)){
-//            return "redirect:/userNotFound";
-//        }
-////
-////        List<CompanyQnaDto> dto = qnaService.findAll();
-////        model.addAttribute("dto", dto);
-//
-//        return "/customer/customer02";
-//    }
 
     @GetMapping("/qna/list")
     public String qnaList(@RequestParam(defaultValue = "qnaDate") String category,
@@ -94,7 +87,8 @@ public class CustomerController {
 //        List<CompanyQnaDto> dto = qnaService.findAll();
         List<CompanyQnaDto> dto = qnaService.findQnasBy(category, searchKeyword);
         model.addAttribute("dto", dto);
-        model.addAttribute("category", category);
+        model.addAttribute("selected", category);
+        model.addAttribute("searchKeyword", searchKeyword);
 
         return "/customer/customer02";
     }
@@ -172,7 +166,7 @@ public class CustomerController {
     }
 
     @GetMapping("/faq/list")
-    public String faq(HttpSession session,Model model){
+    public String faq(HttpSession session, Model model){
 
         if(!isLogin(session)){
             return "redirect:/userNotFound";
@@ -180,6 +174,7 @@ public class CustomerController {
 
         List<CompanyFaqDto> dto = faqService.findAll();
         model.addAttribute("dto", dto);
+
         return "/customer/customer03";
 
     }

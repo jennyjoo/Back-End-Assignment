@@ -99,16 +99,17 @@
       <div>
         <input
           type="image"
-          src="../img/member/btn_close.gif"
-          onclick="window.close()"
+          src="/img/member/btn_close.gif"
+          onclick="location.href='/'"
         />
       </div>
     </div>
     <script>
       const showID = (id) => {
         const foundID = document.getElementById("foundID");
+        idFindForm.style.display = "none";
         foundID.style.display = "block";
-        foundID.innerText = id;
+        foundID.innerText = " 아이디는 " + id + "입니다";
       };
       function submit() {
         var form = document.idFindForm;

@@ -8,6 +8,9 @@ import com.study.Ex14ReadDB.domain.Member.Dto.MemberDto;
 import com.study.Ex14ReadDB.domain.Member.Member;
 import com.study.Ex14ReadDB.domain.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
@@ -100,12 +103,13 @@ public class AdminService {
 
     }
 
-
     @Transactional(readOnly = true)
-    public List<CompanyNoticeDto> findNoticesByCategory(String category,
+    public Page<CompanyNotice> findNoticesByCategory(String category,
                                                         String inputSearchKeyword,
                                                         String orderSelect,
-                                                        int pageSelect){
+                                                        int page,
+                                                        int pageSize){
+
 
         String searchKeyword = inputSearchKeyword.toLowerCase();
 
@@ -114,61 +118,43 @@ public class AdminService {
         String direction = orderSelect.substring(idx + 1);
         String orderCol = orderSelect.substring(0, idx);
 
+        List<Sort.Order> sorts = new ArrayList<>();
+        Sort.Order sort = direction.toLowerCase().equals("asc") ? Sort.Order.asc(orderCol) : Sort.Order.desc(orderCol);
+        sorts.add(sort);
 
-        List<CompanyNotice> notices = new ArrayList<>();
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sorts));
+
+        System.out.println("direction = " + direction);
+        System.out.println("orderCol = " + orderCol);
+        System.out.println("category = " + category);
+        System.out.println("searchKeyword = " + searchKeyword);
+
         if(category.equals("all")){
-            notices = findAllNoticesByKeyword(searchKeyword, pageSelect);
-            return notices.stream().map(CompanyNoticeDto::new).collect(Collectors.toList());
+            return noticeRepository.findNoticesByAll(searchKeyword, pageable);
+        }
+        else if(category.equals("noticeTitle")){
+            return noticeRepository.findNoticesByTitle(searchKeyword, pageable);
+        }
+        else if(category.equals("noticeContent")){
+            return noticeRepository.findNoticesByContent(searchKeyword, pageable);
+
+        }else if(category.equals("noticeMemberId")){
+            return  noticeRepository.findNoticesByMemberId(searchKeyword, pageable);
 
         }
-
-        if(category.equals("noticeMemberId")){
-            notices = findNoticesByMemberIdLike(searchKeyword, pageSelect);
-            return notices.stream().map(CompanyNoticeDto::new).collect(Collectors.toList());
-
-        }
-
-        if(category.equals("noticeContent")){
-            notices = findNoticesByContentLike(searchKeyword, pageSelect);
-            return notices.stream().map(CompanyNoticeDto::new).collect(Collectors.toList());
-        }
-
-        if(category.equals("noticeTitle")){
-            notices = noticeRepository.findNoticesByTitleLike(searchKeyword);
-            return notices.stream().map(CompanyNoticeDto::new).collect(Collectors.toList());
-        }
-
-        Collections.sort(notices, new Comparator<CompanyNotice>() {
-            @Override
-            public int compare(CompanyNotice o1, CompanyNotice o2) {
-                if(orderCol.toLowerCase().equals("id")){
-                    if(direction.toLowerCase().equals("desc")){
-                        return o1.getNoticeMemberId().compareTo(o2.getNoticeMemberId());
-                    }
-                    return o2.getNoticeMemberId().compareTo(o1.getNoticeMemberId());
-                }
-                if(orderCol.toLowerCase().equals("noticeDate")){
-                    if(direction.toLowerCase().equals("desc")){
-                        return o1.getNoticeDate().compareTo(o1.getNoticeDate());
-                    }
-                    return o2.getNoticeDate().compareTo(o1.getNoticeDate());
-                }
-                return 0;
-            }
-        });
-
-        return notices.stream().map(CompanyNoticeDto::new).collect(Collectors.toList());
-
+        return noticeRepository.findAll(pageable);
     }
 
 
-    @Transactional(readOnly = true)
-    public List<CompanyNoticeDto> findAllNotice(){
-        Sort sort = Sort.by(Sort.Direction.DESC, "noticeDate");
-        List<CompanyNotice> notices = noticeRepository.findAll(sort);
 
-        return notices.stream().map(CompanyNoticeDto::new).collect(Collectors.toList());
-    }
+
+//    @Transactional(readOnly = true)
+//    public List<CompanyNoticeDto> findAllNotice(){
+//        Sort sort = Sort.by(Sort.Direction.DESC, "noticeDate");
+//        List<CompanyNotice> notices = noticeRepository.findAll(sort);
+//
+//        return notices.stream().map(CompanyNoticeDto::new).collect(Collectors.toList());
+//    }
 
     @Transactional(readOnly = true)
     public Optional<CompanyNotice> findNoticeById(Long noticeIdx){
@@ -230,6 +216,52 @@ public class AdminService {
         return noticeRepository.findNoticesByContentLike(keyword);
     }
 
+    private List<CompanyNotice> findNoticesByTitleLike(String keyword, int pageSize){
+        if(pageSize == 5){
+            return noticeRepository.findNoticesByTitleLikeLimit5(keyword);
+        }
+        else if(pageSize == 10){
+            return noticeRepository.findNoticesByTitleLikeLimit10(keyword);
+        }
+
+        return noticeRepository.findNoticesByTitleLike(keyword);
+    }
+
+
+    @Transactional(readOnly = true)
+    public Page<Member> findMembersBy(String category,
+                                      String inputSearchKeyword,
+                                      String orderSelect,
+                                      int page,
+                                      int pageSize){
+
+
+        String searchKeyword = inputSearchKeyword.toLowerCase();
+
+        int idx = orderSelect.lastIndexOf("_");
+
+        String direction = orderSelect.substring(idx + 1);
+        String orderCol = orderSelect.substring(0, idx);
+
+        System.out.println("orderCol = " + orderCol);
+
+        List<Sort.Order> sorts = new ArrayList<>();
+        Sort.Order sort = direction.toLowerCase().equals("asc") ? Sort.Order.asc(orderCol) : Sort.Order.desc(orderCol);
+        sorts.add(sort);
+
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sorts));
+
+
+        if(category.equals("member_id")){
+            return memberRepository.findMembersByMemberId(searchKeyword, pageable);
+        }
+        else if(category.equals("member_email")){
+            return memberRepository.findMembersByMemberEmail(searchKeyword, pageable);
+        }
+
+        return memberRepository.findMembersByAll(searchKeyword, pageable);
+
+    }
 
     private List<Member> findAllByKeyword(String searchKeyword, int pageSize){
         if(pageSize == 5){
@@ -279,6 +311,17 @@ public class AdminService {
 
     }
 
+
+    @Transactional(readOnly = true)
+    public Long memberTotalCount(){
+        return memberRepository.count();
+    }
+
+
+    @Transactional(readOnly = true)
+    public Long noticeTotalCount(){
+        return noticeRepository.count();
+    }
 
 
 }

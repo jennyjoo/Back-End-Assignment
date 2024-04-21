@@ -132,7 +132,7 @@
       </div>
       <div class="faq">
         <table>
-          <tr th:each="list, status:${dto}">
+          <tr th:each="list, status:${dto}" style="width: 90px">
             <td th:text="|질문${status.count}|"></td>
             <td
               th:onclick="|location.href='http://localhost:8080/customer/faq/detail?no=${list.faqIdx}'|"
@@ -140,13 +140,13 @@
             ></td>
           </tr>
 
-          <tr>
+          <!-- <tr>
             <td>질문3</td>
             <td onclick="window.location.href='customer03_1.html?no=3'">
               자주하는 질문모음입니다.
             </td>
           </tr>
-          <!-- <tr>
+          <tr>
             <td>질문4</td>
             <td onclick="window.location.href='customer03_1.html?no=4'">
               자주하는 질문모음입니다.

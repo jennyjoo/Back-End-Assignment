@@ -7,8 +7,8 @@ import com.study.Ex14ReadDB.domain.Community.dto.Request.RequestModifyNoticeDto;
 import com.study.Ex14ReadDB.domain.Community.dto.Request.RequestWriteNoticeDto;
 import com.study.Ex14ReadDB.domain.Community.dto.Response.ResponseModifyNoticeDto;
 import com.study.Ex14ReadDB.domain.Member.Member;
-import com.study.Ex14ReadDB.domain.MemberDomain.AdminService;
-import com.study.Ex14ReadDB.domain.MemberDomain.MemberAdmin;
+import com.study.Ex14ReadDB.domain.Admin.AdminService;
+import com.study.Ex14ReadDB.domain.Admin.MemberAdmin;
 import com.study.Ex14ReadDB.domain.Member.MemberService;
 import com.study.Ex14ReadDB.domain.Member.Dto.MemberDto;
 import com.study.Ex14ReadDB.domain.Member.Dto.Request.RequestLoginDto;
@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -91,10 +90,6 @@ public class AdminController {
 
 //        PageRequest pageabe = page(size limit orderby("memberIdx").ascending()
 
-
-        // Pass request URI as a separate attribute
-        String requestURI = request.getRequestURI();
-        model.addAttribute("requestURI", requestURI);
 
         Page< Member> paging = adminService.findMembersBy(searchSelect, searchKeyword, orderSelect, page, pageSize);
         List<MemberDto> dto = paging.stream().map(MemberDto::new).collect(Collectors.toList());

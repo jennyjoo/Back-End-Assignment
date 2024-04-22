@@ -1,4 +1,4 @@
-package com.study.Ex14ReadDB.domain.MemberDomain;
+package com.study.Ex14ReadDB.domain.Admin;
 
 
 import jakarta.persistence.*;

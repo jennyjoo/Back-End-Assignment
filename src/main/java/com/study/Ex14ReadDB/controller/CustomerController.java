@@ -84,7 +84,6 @@ public class CustomerController {
             return "redirect:/userNotFound";
         }
 
-//        List<CompanyQnaDto> dto = qnaService.findAll();
         List<CompanyQnaDto> dto = qnaService.findQnasBy(category, searchKeyword);
         model.addAttribute("dto", dto);
         model.addAttribute("selected", category);

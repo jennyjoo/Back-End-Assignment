@@ -64,12 +64,10 @@
       <!-- 사이드메뉴 -->
       <div id="adminSide">
         <ul>
-          <li><a href="/admin/memberList">회원 관리</a></li>
           <li>
-            <a href="/admin/noticeList" class="adminSideActive"
-              >공지사항 관리</a
-            >
+            <a href="/admin/memberList" class="adminSideActive">회원 관리</a>
           </li>
+          <li><a href="/admin/noticeList">공지사항 관리</a></li>
         </ul>
       </div>
       <!-- 메인 -->
@@ -185,21 +183,11 @@
                 th:onclick="|location.href='/admin/notice/view?no=${list.noticeIdx}'|"
                 style="cursor: pointer"
               >
-                <td th:text="${list.noticeIdx}">1</td>
+                <td th:text="${status.count}">1</td>
                 <td th:text="${list.noticeTitle}">타이틀1</td>
                 <td th:text="${list.noticeMemberId}">admin</td>
                 <td th:text="${list.noticeDate}">2024-04-09</td>
               </tr>
-
-              <!-- <tr
-                onclick="location.href='./admin_notice_view.html?notice_idx=1';"
-                style="cursor: pointer"
-              >
-                <td>5</td>
-                <td>타이틀1</td>
-                <td>admin</td>
-                <td>2024-04-05</td>
-              </tr> -->
             </tbody>
           </table>
         </div>

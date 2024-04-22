@@ -3,10 +3,6 @@ package com.study.Ex14ReadDB.controller;
 
 import com.study.Ex14ReadDB.domain.Community.NoticeService;
 import com.study.Ex14ReadDB.domain.Community.dto.CompanyNoticeDto;
-import com.study.Ex14ReadDB.domain.Community.dto.CompanyNoticeListDto;
-import com.study.Ex14ReadDB.domain.Community.dto.Request.RequestCompanyNoticeDto;
-import com.study.Ex14ReadDB.domain.Community.dto.Request.RequestSearchNoticeDto;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,7 +31,7 @@ public class CommunityController {
                          Model model){
 
 
-        List<CompanyNoticeListDto> dto = noticeService.findAllNoticesBy(category, searchKeyword);
+        List<CompanyNoticeDto> dto = noticeService.findAllNoticesBy(category, searchKeyword);
 
         model.addAttribute("dto", dto);
         model.addAttribute("category", category);

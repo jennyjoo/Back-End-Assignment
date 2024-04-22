@@ -1,4 +1,4 @@
-package com.study.Ex14ReadDB.domain.MemberDomain;
+package com.study.Ex14ReadDB.domain.Admin;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;

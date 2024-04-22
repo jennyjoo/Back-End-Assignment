@@ -3,7 +3,6 @@ package com.study.Ex14ReadDB.domain.Community;
 
 import com.study.Ex14ReadDB.domain.Community.Entity.CompanyNotice;
 import com.study.Ex14ReadDB.domain.Community.dto.CompanyNoticeDto;
-import com.study.Ex14ReadDB.domain.Community.dto.CompanyNoticeListDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,24 +18,24 @@ public class NoticeService {
     private final NoticeRepository noticeRepository;
 
 
-    public List<CompanyNoticeListDto> findAllNoticesBy(String category, String keyword){
-        List<CompanyNoticeListDto> dto = null;
+    public List<CompanyNoticeDto> findAllNoticesBy(String category, String keyword){
+        List<CompanyNoticeDto> dto = null;
         if(category.equals("noticeDate")) {
             dto = noticeRepository.findAllOrderByNoticeDateDesc()
                     .stream()
-                    .map(CompanyNoticeListDto::new)
+                    .map(CompanyNoticeDto::new)
                     .collect(Collectors.toList());
         }
         else if(category.equals("noticeTitle")){
             dto = noticeRepository.findAllByNoticeTitle(keyword)
                     .stream()
-                    .map(CompanyNoticeListDto::new)
+                    .map(CompanyNoticeDto::new)
                     .collect(Collectors.toList());
         }
         else if(category.equals("noticeContent")){
             dto = noticeRepository.findAllByNoticeContent(keyword)
                     .stream()
-                    .map(CompanyNoticeListDto::new)
+                    .map(CompanyNoticeDto::new)
                     .collect(Collectors.toList());
         }
         return dto;
@@ -44,9 +43,9 @@ public class NoticeService {
     }
 
     @Transactional(readOnly = true)
-    public List<CompanyNoticeListDto> findAllList(){
+    public List<CompanyNoticeDto> findAllList(){
         List<CompanyNotice> notices = noticeRepository.findAll();
-        List<CompanyNoticeListDto> dtos = notices.stream().map(CompanyNoticeListDto::new).collect(Collectors.toList());
+        List<CompanyNoticeDto> dtos = notices.stream().map(CompanyNoticeDto::new).collect(Collectors.toList());
 
         return dtos;
     }
@@ -69,26 +68,4 @@ public class NoticeService {
         return dto;
     }
 
-//    @Transactional(readOnly = true)
-//    public List<CompanyNoticeListDto> findByTitle(String title){
-//        List<CompanyNotice> notices = noticeRepository.findByTitleLike(title);
-//
-//        return notices.stream().map(CompanyNoticeListDto::new).collect(Collectors.toList());
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public List<CompanyNoticeListDto> findByContent(String content){
-//        List<CompanyNotice> notices = noticeRepository.findByContentLike(content);
-//
-//        return notices.stream().map(CompanyNoticeListDto::new).collect(Collectors.toList());
-//    }
-
-
-
-//    @Transactional(readOnly = true)
-//    public List<CompanyNoticeListDto> findByMemberId(String memberId){
-//        List<CompanyNotice> notices = noticeRepository.findByMemberIdLike(memberId);
-//
-//        return notices.stream().map(CompanyNoticeListDto::new).collect(Collectors.toList());
-//    }
 }

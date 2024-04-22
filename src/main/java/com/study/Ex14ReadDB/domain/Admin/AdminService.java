@@ -1,9 +1,8 @@
-package com.study.Ex14ReadDB.domain.MemberDomain;
+package com.study.Ex14ReadDB.domain.Admin;
 
 
 import com.study.Ex14ReadDB.domain.Community.Entity.CompanyNotice;
 import com.study.Ex14ReadDB.domain.Community.NoticeRepository;
-import com.study.Ex14ReadDB.domain.Community.dto.CompanyNoticeDto;
 import com.study.Ex14ReadDB.domain.Member.Dto.MemberDto;
 import com.study.Ex14ReadDB.domain.Member.Member;
 import com.study.Ex14ReadDB.domain.Member.MemberRepository;
